@@ -1,4 +1,4 @@
-package com.sonicplayground.geminiboard.infrastructure.config;
+package com.sonicplayground.geminiboard.infrastructure.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

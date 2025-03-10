@@ -11,29 +11,30 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class UserService {
+
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final UserValidator userValidator;
 
     @Transactional
-    public User createUser(User user){
-        userValidator.validateUser(user);
+    public User createUser(User user) {
         user.passwordEncode(passwordEncoder);
         return userRepository.save(user);
     }
+
     @Transactional
-    public User updateUser(User user){
-        userValidator.validateUpdateUser(user);
+    public User updateUser(User user) {
         return userRepository.save(user);
     }
+
     @Transactional
-    public void updatePassword(User user, String newPassword){
-        userValidator.validateUpdatePassword(user);
+    public void updatePassword(User user, String newPassword) {
         user.updatePassword(newPassword);
         user.passwordEncode(passwordEncoder);
         userRepository.save(user);
     }
-    public User findUser(Long id){
-        return userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
+
+    public User findUser(Long id) {
+        return userRepository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
     }
 }

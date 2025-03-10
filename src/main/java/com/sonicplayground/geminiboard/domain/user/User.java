@@ -1,6 +1,13 @@
 package com.sonicplayground.geminiboard.domain.user;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -42,7 +49,8 @@ public class User {
     private String password;
 
     @Builder
-    public User(String name, String nickname, String gender, Integer age, String address, UserType userType, String profilePicture, String loginId, String password) {
+    public User(String name, String nickname, String gender, Integer age, String address,
+        UserType userType, String profilePicture, String loginId, String password) {
         this.name = name;
         this.nickname = nickname;
         this.gender = gender;
@@ -53,7 +61,9 @@ public class User {
         this.loginId = loginId;
         this.password = password;
     }
-    public void update(String name, String nickname, String gender, Integer age, String address,String profilePicture){
+
+    public void update(String name, String nickname, String gender, Integer age, String address,
+        String profilePicture) {
         this.name = name;
         this.nickname = nickname;
         this.gender = gender;
@@ -61,10 +71,12 @@ public class User {
         this.address = address;
         this.profilePicture = profilePicture;
     }
-    public void updatePassword(String password){
+
+    public void updatePassword(String password) {
         this.password = password;
     }
-    public void passwordEncode(PasswordEncoder passwordEncoder){
+
+    public void passwordEncode(PasswordEncoder passwordEncoder) {
         this.password = passwordEncoder.encode(this.password);
     }
 }
