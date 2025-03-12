@@ -21,32 +21,33 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long seq;
 
-    @Column(nullable = false)
+    @Column(name = "user_uuid")
+    private String uuid; // GUID
+
+    @Column(name = "user_nm")
     private String name; // 이름
 
-    @Column(nullable = false, unique = true)
     private String nickname; // 닉네임
 
     private String gender; // 성별
 
     private Integer age; // 나이
 
-    @Column(nullable = false)
+    @Column(name = "user_addr")
     private String address; // 주소
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     private UserType userType; // 사용자 타입 (서비스관리자, 서비스이용자, 정비소 관리자)
 
     private String profilePicture; // 프로필 사진 URL
 
-    @Column(nullable = false, unique = true)
-    private String loginId;
+    private String loginId; // 로그인용 ID
 
-    @Column(nullable = false)
-    private String password;
+    private String password; // 로그인용 PW
+
+    private boolean isValid;
 
     @Builder
     public User(String name, String nickname, String gender, Integer age, String address,

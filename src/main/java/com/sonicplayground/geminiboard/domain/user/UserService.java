@@ -1,6 +1,7 @@
 package com.sonicplayground.geminiboard.domain.user;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -8,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * 사용자 비즈니스 로직
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -16,9 +18,10 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public User createUser(User user) {
-        user.passwordEncode(passwordEncoder);
-        return userRepository.save(user);
+    public User createUser(UserCommand.CreateUserRequest user) {
+        User newUser = user.toEntity();
+        newUser.passwordEncode(passwordEncoder);
+        return userRepository.save(newUser);
     }
 
     @Transactional
