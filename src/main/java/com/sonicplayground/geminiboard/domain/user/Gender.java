@@ -1,25 +1,23 @@
 package com.sonicplayground.geminiboard.domain.user;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
- * 사용자 타입
+ * 사용자 성별
  */
-public enum UserType {
-    SERVICE_ADMIN, // 서비스 관리자
-    SERVICE_USER, // 서비스 이용자
-    MAINTENANCE_ADMIN // 정비소 관리자
+public enum Gender {
+    MALE, // 남성
+    FEMALE, // 여성
+    ETC // 그외
     ;
 
     @JsonCreator
-    public static UserType from(String value) {
+    public static Gender from(String value) {
         if (value == null || value.isEmpty()) {
             return null;
         }
         try {
-            return UserType.valueOf(value.toUpperCase());
+            return Gender.valueOf(value.toUpperCase());
         } catch (IllegalArgumentException e) {
             return null;
         }

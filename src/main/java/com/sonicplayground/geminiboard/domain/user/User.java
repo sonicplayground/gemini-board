@@ -7,31 +7,41 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
+import java.util.UUID;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.SQLRestriction;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Entity
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Table(name = "users")
+@SQLRestriction("is_valid = true")
 public class User {
 
     @Id
+    @Column(name = "user_seq")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
 
-    @Column(name = "user_uuid")
-    private String uuid; // GUID
+    @Column(nullable = false, unique = true, name = "user_key")
+    private UUID key; // GUID
 
     @Column(name = "user_nm")
     private String name; // 이름
 
     private String nickname; // 닉네임
 
-    private String gender; // 성별
+    @Enumerated(EnumType.STRING)
+    private Gender gender; // 성별
 
     private Integer age; // 나이
 
@@ -47,23 +57,18 @@ public class User {
 
     private String password; // 로그인용 PW
 
-    private boolean isValid;
+    @Builder.Default
+    @ColumnDefault("true")
+    private boolean isValid = true;
 
-    @Builder
-    public User(String name, String nickname, String gender, Integer age, String address,
-        UserType userType, String profilePicture, String loginId, String password) {
-        this.name = name;
-        this.nickname = nickname;
-        this.gender = gender;
-        this.age = age;
-        this.address = address;
-        this.userType = userType;
-        this.profilePicture = profilePicture;
-        this.loginId = loginId;
-        this.password = password;
+    @PrePersist
+    protected void onCreate() {
+        if (this.key == null) {
+            this.key = UUID.randomUUID();
+        }
     }
 
-    public void update(String name, String nickname, String gender, Integer age, String address,
+    public void update(String name, String nickname, Gender gender, Integer age, String address,
         String profilePicture) {
         this.name = name;
         this.nickname = nickname;

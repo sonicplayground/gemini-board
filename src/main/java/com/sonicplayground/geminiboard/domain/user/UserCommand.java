@@ -13,7 +13,7 @@ public class UserCommand {
 
         private final String name;
         private final String nickname;
-        private final String gender;
+        private final Gender gender;
         private final Integer age;
         private final String address;
         private final UserType userType;
@@ -29,7 +29,10 @@ public class UserCommand {
                 .age(age)
                 .address(address)
                 .userType(userType)
-                .profilePicture(profilePicture).build();
+                .profilePicture(profilePicture)
+                .loginId(loginId)
+                .password(password)
+                .build();
         }
     }
 }
