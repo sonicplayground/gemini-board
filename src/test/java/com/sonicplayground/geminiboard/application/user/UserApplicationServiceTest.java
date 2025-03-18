@@ -1,51 +1,138 @@
 package com.sonicplayground.geminiboard.application.user;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-
-import com.sonicplayground.geminiboard.domain.user.Gender;
+import com.sonicplayground.geminiboard.domain.user.User;
 import com.sonicplayground.geminiboard.domain.user.UserCommand;
 import com.sonicplayground.geminiboard.domain.user.UserService;
-import com.sonicplayground.geminiboard.domain.user.UserType;
+import com.sonicplayground.geminiboard.interfaces.user.UserDto.UserResponse;
+import com.sonicplayground.geminiboard.interfaces.user.UserDto.UserSearchCondition;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+
+import java.util.List;
+import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class UserApplicationServiceTest {
 
-    @InjectMocks
-    private UserApplicationService userApplicationService;
-
     @Mock
     private UserService userService;
 
+    @InjectMocks
+    private UserApplicationService userApplicationService;
+
     @Test
-    @DisplayName("사용자 생성 테스트")
-    void createUserTest() {
-        // given
-        UserCommand.CreateUserRequest request = UserCommand.CreateUserRequest.builder()
-            .name("홍길동")
-            .nickname("동대장")
-            .gender(Gender.MALE)
-            .age(20)
-            .address("서천군")
-            .userType(UserType.SERVICE_USER)
-            .profilePicture(null)
-            .loginId("hkdfollowme")
-            .password("qweqwe123!")
+    @DisplayName("createUser - Success")
+    void createUser_Success() {
+        // Given
+        UserCommand.CreateUserRequest request = UserCommand.CreateUserRequest
+            .builder()
+            .loginId("testLoginId")
+            .password("testPassword")
+            .nickname("testNickname")
+            .build();
+        User createdUser = User.builder()
+            .key(UUID.randomUUID())
+            .loginId("testLoginId")
+            .password("testPassword")
+            .nickname("testNickname")
             .build();
 
-        when(userService.createUser(any())).thenReturn(request.toEntity());
+        when(userService.createUser(request)).thenReturn(createdUser);
 
-        // when
-        String userKey = userApplicationService.createUser(request);
+        // When
+        UUID result = userApplicationService.createUser(request);
 
-        // then
-        assertNotNull(userKey);
+        // Then
+        assertNotNull(result);
+        assertEquals(createdUser.getKey(), result);
+        verify(userService, times(1)).checkLoginIdDuplicate("testLoginId");
+        verify(userService, times(1)).createUser(request);
+    }
+
+    @Test
+    @DisplayName("createUser - LoginId Duplicate")
+    void createUser_LoginIdDuplicate() {
+        // Given
+        UserCommand.CreateUserRequest request = UserCommand.CreateUserRequest
+            .builder()
+            .name("duplicateLoginId")
+            .password("testPassword")
+            .nickname("testNickname")
+            .build();
+
+        doThrow(new RuntimeException("Login ID already exists")).when(userService).checkLoginIdDuplicate(request.getLoginId());
+
+        //when
+        assertThrows(RuntimeException.class, () -> userApplicationService.createUser(request));
+
+        //then
+        verify(userService, times(1)).checkLoginIdDuplicate(request.getLoginId());
+        verify(userService, never()).createUser(any());
+    }
+
+    @Test
+    @DisplayName("getUsers - Success")
+    void getUsers_Success() {
+        // Given
+        UserSearchCondition condition = new UserSearchCondition();
+        Pageable pageable = PageRequest.of(0, 10);
+        User user1 = User.builder()
+            .key(UUID.randomUUID())
+            .loginId("testLoginId1")
+            .password("testPassword1")
+            .nickname("testNickname1")
+            .build();
+        User user2 = User.builder()
+            .key(UUID.randomUUID())
+            .loginId("testLoginId2")
+            .password("testPassword2")
+            .nickname("testNickname2")
+            .build();
+        List<User> users = List.of(user1, user2);
+        Page<User> userPage = new PageImpl<>(users, pageable, users.size());
+
+        when(userService.retrieveUsers(condition, pageable)).thenReturn(userPage);
+
+        // When
+        Page<UserResponse> result = userApplicationService.getUsers(condition, pageable);
+
+        // Then
+        assertNotNull(result);
+        assertEquals(2, result.getContent().size());
+        assertEquals("testLoginId1", result.getContent().get(0).getLoginId());
+        assertEquals("testNickname2", result.getContent().get(1).getNickname());
+        verify(userService, times(1)).retrieveUsers(condition, pageable);
+    }
+
+    @Test
+    @DisplayName("getUsers - Empty List")
+    void getUsers_EmptyList() {
+        // Given
+        UserSearchCondition condition = new UserSearchCondition();
+        Pageable pageable = PageRequest.of(0, 10);
+        List<User> users = List.of();
+        Page<User> userPage = new PageImpl<>(users, pageable, 0);
+
+        when(userService.retrieveUsers(condition, pageable)).thenReturn(userPage);
+
+        // When
+        Page<UserResponse> result = userApplicationService.getUsers(condition, pageable);
+
+        // Then
+        assertNotNull(result);
+        assertEquals(0, result.getContent().size());
+        verify(userService, times(1)).retrieveUsers(condition, pageable);
     }
 }
