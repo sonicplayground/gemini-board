@@ -7,76 +7,78 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
+import java.util.UUID;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
+import org.springframework.util.StringUtils;
 
 @Entity
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Table(name = "users")
+@SQLRestriction("is_valid = true")
+@SQLDelete(sql = "UPDATE users SET is_valid = false WHERE user_seq = ?")
 public class User {
 
     @Id
+    @Column(name = "user_seq")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long seq;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true, name = "user_key")
+    private UUID key; // GUID
+
+    @Column(name = "user_nm")
     private String name; // 이름
 
-    @Column(nullable = false, unique = true)
     private String nickname; // 닉네임
 
-    private String gender; // 성별
+    @Enumerated(EnumType.STRING)
+    private Gender gender; // 성별
 
-    private Integer age; // 나이
+    private Integer age; // 나이 todo birth
 
-    @Column(nullable = false)
+    @Column(name = "user_addr")
     private String address; // 주소
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     private UserType userType; // 사용자 타입 (서비스관리자, 서비스이용자, 정비소 관리자)
 
     private String profilePicture; // 프로필 사진 URL
 
-    @Column(nullable = false, unique = true)
-    private String loginId;
+    private String loginId; // 로그인용 ID
 
-    @Column(nullable = false)
-    private String password;
+    private String password; // 로그인용 PW
 
-    @Builder
-    public User(String name, String nickname, String gender, Integer age, String address,
-        UserType userType, String profilePicture, String loginId, String password) {
-        this.name = name;
-        this.nickname = nickname;
-        this.gender = gender;
-        this.age = age;
-        this.address = address;
-        this.userType = userType;
-        this.profilePicture = profilePicture;
-        this.loginId = loginId;
-        this.password = password;
+    @Builder.Default
+    @ColumnDefault("true")
+    private boolean isValid = true;
+
+    @PrePersist
+    protected void onCreate() {
+        if (this.key == null) {
+            this.key = UUID.randomUUID();
+        }
     }
 
-    public void update(String name, String nickname, String gender, Integer age, String address,
-        String profilePicture) {
-        this.name = name;
-        this.nickname = nickname;
-        this.gender = gender;
-        this.age = age;
-        this.address = address;
-        this.profilePicture = profilePicture;
-    }
-
-    public void updatePassword(String password) {
-        this.password = password;
-    }
-
-    public void passwordEncode(PasswordEncoder passwordEncoder) {
-        this.password = passwordEncoder.encode(this.password);
+    public void update(String nickname, String address, String profilePicture) {
+        if (StringUtils.hasText(nickname)) {
+            this.nickname = nickname;
+        }
+        if (StringUtils.hasText(address)) {
+            this.address = address;
+        }
+        if (StringUtils.hasText(profilePicture)) {
+            this.profilePicture = profilePicture;
+        }
     }
 }
