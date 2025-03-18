@@ -1,21 +1,18 @@
 package com.sonicplayground.geminiboard.domain.user;
 
+import com.sonicplayground.geminiboard.interfaces.user.UserDto.UserSearchCondition;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
  * 사용자 저장소 인터페이스
  */
-public interface UserRepository extends JpaRepository<User, Long> {
+public interface UserReader {
 
     Optional<User> findByLoginId(String loginId);
 
-    Optional<User> findByNickname(String nickname);
-
     boolean existsByLoginId(String loginId);
 
-    Page<User> findAll(Specification<User> spec, Pageable pageable);
+    Page<User> findAll(UserSearchCondition spec, Pageable pageable);
 }
