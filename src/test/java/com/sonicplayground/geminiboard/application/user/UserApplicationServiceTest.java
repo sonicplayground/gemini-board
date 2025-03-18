@@ -217,4 +217,41 @@ class UserApplicationServiceTest {
         verify(userService, times(1)).deleteUser(userKey);
     }
 
+    
+    @Test
+    @DisplayName("getUser - Success")
+    void getUser_Success() {
+        // Given
+        UUID userKey = UUID.randomUUID();
+        User user = User.builder()
+            .key(userKey)
+            .loginId("testLoginId")
+            .password("testPassword")
+            .nickname("testNickname")
+            .build();
+
+        when(userService.getUser(userKey)).thenReturn(user);
+
+        // When
+        UserResponse result = userApplicationService.getUser(userKey);
+
+        // Then
+        assertNotNull(result);
+        assertEquals("testLoginId", result.getLoginId());
+        assertEquals("testNickname", result.getNickname());
+        verify(userService, times(1)).getUser(userKey);
+    }
+
+    @Test
+    @DisplayName("getUser - User Not Found")
+    void getUser_UserNotFound() {
+        // Given
+        UUID userKey = UUID.randomUUID();
+        doThrow(new RuntimeException("User not found")).when(userService).getUser(userKey);
+
+        // When & Then
+        assertThrows(RuntimeException.class, () -> userApplicationService.getUser(userKey));
+        verify(userService, times(1)).getUser(userKey);
+    }
+
 }
