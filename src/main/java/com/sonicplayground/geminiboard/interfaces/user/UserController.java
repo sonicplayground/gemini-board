@@ -1,8 +1,10 @@
 package com.sonicplayground.geminiboard.interfaces.user;
 
 import com.sonicplayground.geminiboard.application.user.UserApplicationService;
+import com.sonicplayground.geminiboard.common.response.PagedContent;
 import com.sonicplayground.geminiboard.domain.user.Gender;
 import com.sonicplayground.geminiboard.domain.user.UserType;
+import com.sonicplayground.geminiboard.interfaces.user.UserDto.UserResponse;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +35,7 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<UserDto.UserResponse>> getUsers(
+    public ResponseEntity<PagedContent<UserResponse>> getUsers(
         @RequestParam(defaultValue = "0") int page,
         @RequestParam(defaultValue = "10") int size,
         @RequestParam(required = false) String nickname,
@@ -51,7 +53,9 @@ public class UserController {
             .userType(UserType.from(userType))
             .build();
         Page<UserDto.UserResponse> users = userApplicationService.getUsers(condition, pageable);
-        return ResponseEntity.ok(users);
+        PagedContent<UserDto.UserResponse> result = new PagedContent<>(users);
+
+        return ResponseEntity.ok(result);
     }
 
 
