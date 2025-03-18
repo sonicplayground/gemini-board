@@ -141,7 +141,7 @@ class UserApplicationServiceTest {
         assertEquals(0, result.getContent().size());
         verify(userService, times(1)).retrieveUsers(condition, pageable);
     }
-    
+
     @Test
     @DisplayName("updateUser - Success")
     void updateUser_Success() {
@@ -185,10 +185,12 @@ class UserApplicationServiceTest {
             .address("newAddress")
             .build();
 
-        doThrow(new RuntimeException("User not found")).when(userService).updateUser(userKey, request);
+        doThrow(new RuntimeException("User not found")).when(userService)
+            .updateUser(userKey, request);
 
         // When & Then
-        assertThrows(RuntimeException.class, () -> userApplicationService.updateUser(userKey, request));
+        assertThrows(RuntimeException.class,
+            () -> userApplicationService.updateUser(userKey, request));
         verify(userService, times(1)).updateUser(userKey, request);
     }
 
@@ -217,7 +219,7 @@ class UserApplicationServiceTest {
         verify(userService, times(1)).deleteUser(userKey);
     }
 
-    
+
     @Test
     @DisplayName("getUser - Success")
     void getUser_Success() {

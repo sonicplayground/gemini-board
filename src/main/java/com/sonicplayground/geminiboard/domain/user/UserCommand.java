@@ -21,7 +21,7 @@ public class UserCommand {
         private final String loginId;
         private final String password;
 
-        public User toEntity() {
+        public User toEntity(String encodedPassword) {
             return User.builder()
                 .name(name)
                 .nickname(nickname)
@@ -31,7 +31,7 @@ public class UserCommand {
                 .userType(userType)
                 .profilePicture(profilePicture)
                 .loginId(loginId)
-                .password(password)
+                .password(encodedPassword)
                 .build();
         }
     }

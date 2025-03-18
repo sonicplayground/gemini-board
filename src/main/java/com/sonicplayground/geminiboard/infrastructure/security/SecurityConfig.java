@@ -32,7 +32,7 @@ public class SecurityConfig {
             // 요청 권한 설정
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll() // CORS Preflight 요청 허용
-                .requestMatchers("/api/v1/**").permitAll() // `/api/v1/**` 모든 요청 허용
+                .requestMatchers("/api/v1/users/**").permitAll() // `/api/v1/**` 모든 요청 허용
                 .anyRequest().authenticated() // 그 외 요청은 인증 필요
             );
 

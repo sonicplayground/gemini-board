@@ -25,8 +25,8 @@ public class UserService {
 
     @Transactional
     public User createUser(UserCommand.CreateUserRequest user) {
-        User newUser = user.toEntity();
-        newUser.passwordEncode(passwordEncoder);
+        String encodedPassword = passwordEncoder.encode(user.getPassword());
+        User newUser = user.toEntity(encodedPassword);
         return userStore.save(newUser);
     }
 
