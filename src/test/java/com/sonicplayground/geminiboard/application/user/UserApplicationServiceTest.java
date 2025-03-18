@@ -192,4 +192,29 @@ class UserApplicationServiceTest {
         verify(userService, times(1)).updateUser(userKey, request);
     }
 
+    @Test
+    @DisplayName("deleteUser - Success")
+    void deleteUser_Success() {
+        // Given
+        UUID userKey = UUID.randomUUID();
+
+        // When
+        userApplicationService.deleteUser(userKey);
+
+        // Then
+        verify(userService, times(1)).deleteUser(userKey);
+    }
+
+    @Test
+    @DisplayName("deleteUser - User Not Found")
+    void deleteUser_UserNotFound() {
+        // Given
+        UUID userKey = UUID.randomUUID();
+        doThrow(new RuntimeException("User not found")).when(userService).deleteUser(userKey);
+
+        // When & Then
+        assertThrows(RuntimeException.class, () -> userApplicationService.deleteUser(userKey));
+        verify(userService, times(1)).deleteUser(userKey);
+    }
+
 }
