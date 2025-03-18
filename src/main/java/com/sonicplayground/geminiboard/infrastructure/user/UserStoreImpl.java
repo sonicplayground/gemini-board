@@ -17,5 +17,9 @@ public class UserStoreImpl implements UserStore {
         return userRepository.save(newUser);
     }
 
+    public void delete(User user) {
+        userRepository.delete(user);
+    }
+
 
 }

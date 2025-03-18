@@ -15,6 +15,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.StringUtils;
@@ -26,6 +27,7 @@ import org.springframework.util.StringUtils;
 @Builder
 @Table(name = "users")
 @SQLRestriction("is_valid = true")
+@SQLDelete(sql = "UPDATE users SET is_valid = false WHERE user_seq = ?")
 public class User {
 
     @Id

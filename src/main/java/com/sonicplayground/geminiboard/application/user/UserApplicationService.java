@@ -39,4 +39,8 @@ public class UserApplicationService {
         User updatedUser = userService.updateUser(userKey, request);
         return new UserResponse(updatedUser);
     }
+
+    public void deleteUser(UUID userKey) {
+        userService.deleteUser(userKey);
+    }
 }

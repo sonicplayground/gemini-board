@@ -134,4 +134,15 @@ public class UserDto {
         }
 
     }
+
+    @Getter
+    @ToString
+    public static class DeleteResponse {
+
+        private final String message;
+
+        public DeleteResponse(String message) {
+            this.message = message;
+        }
+    }
 }

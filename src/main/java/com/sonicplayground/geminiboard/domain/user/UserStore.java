@@ -6,4 +6,6 @@ package com.sonicplayground.geminiboard.domain.user;
 public interface UserStore {
 
     User save(User newUser);
+
+    void delete(User user);
 }

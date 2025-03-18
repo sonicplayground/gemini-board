@@ -52,4 +52,10 @@ public class UserService {
 
         return user;
     }
+
+    public void deleteUser(UUID userKey) {
+        User user = userReader.findByKey(userKey)
+            .orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
+        userStore.delete(user);
+    }
 }
