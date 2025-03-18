@@ -4,6 +4,7 @@ import com.sonicplayground.geminiboard.application.user.UserApplicationService;
 import com.sonicplayground.geminiboard.common.response.PagedContent;
 import com.sonicplayground.geminiboard.domain.user.Gender;
 import com.sonicplayground.geminiboard.domain.user.UserType;
+import com.sonicplayground.geminiboard.interfaces.user.UserDto.UserResponse;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -58,6 +59,12 @@ public class UserController {
         PagedContent<UserDto.UserResponse> result = new PagedContent<>(users);
 
         return ResponseEntity.ok(result);
+    }
+
+    @GetMapping(value = "/{userKey}")
+    public ResponseEntity<UserDto.UserResponse> getUser(@PathVariable String userKey) {
+        UserResponse user = userApplicationService.getUser(UUID.fromString(userKey));
+        return ResponseEntity.ok(user);
     }
 
     @PutMapping(value = "/{userKey}")

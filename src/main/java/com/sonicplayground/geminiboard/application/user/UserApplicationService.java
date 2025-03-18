@@ -43,4 +43,9 @@ public class UserApplicationService {
     public void deleteUser(UUID userKey) {
         userService.deleteUser(userKey);
     }
+
+    public UserResponse getUser(UUID uuid) {
+        User user = userService.getUser(uuid);
+        return new UserResponse(user);
+    }
 }

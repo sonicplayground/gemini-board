@@ -43,6 +43,11 @@ public class UserService {
 
     }
 
+    public User getUser(UUID userKey) {
+        return userReader.findByKey(userKey)
+            .orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
+    }
+
     @Transactional
     public User updateUser(UUID userKey, UpdateUserRequest request) {
         User user = userReader.findByKey(userKey)
@@ -53,6 +58,7 @@ public class UserService {
         return user;
     }
 
+    @Transactional
     public void deleteUser(UUID userKey) {
         User user = userReader.findByKey(userKey)
             .orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
