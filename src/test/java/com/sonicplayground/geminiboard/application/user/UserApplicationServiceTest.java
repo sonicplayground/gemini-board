@@ -1,10 +1,22 @@
 package com.sonicplayground.geminiboard.application.user;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import com.sonicplayground.geminiboard.domain.user.User;
 import com.sonicplayground.geminiboard.domain.user.UserCommand;
 import com.sonicplayground.geminiboard.domain.user.UserService;
 import com.sonicplayground.geminiboard.interfaces.user.UserDto.UserResponse;
 import com.sonicplayground.geminiboard.interfaces.user.UserDto.UserSearchCondition;
+import java.util.List;
+import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,13 +27,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-
-import java.util.List;
-import java.util.UUID;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class UserApplicationServiceTest {
@@ -72,7 +77,8 @@ class UserApplicationServiceTest {
             .nickname("testNickname")
             .build();
 
-        doThrow(new RuntimeException("Login ID already exists")).when(userService).checkLoginIdDuplicate(request.getLoginId());
+        doThrow(new RuntimeException("Login ID already exists")).when(userService)
+            .checkLoginIdDuplicate(request.getLoginId());
 
         //when
         assertThrows(RuntimeException.class, () -> userApplicationService.createUser(request));
@@ -135,4 +141,55 @@ class UserApplicationServiceTest {
         assertEquals(0, result.getContent().size());
         verify(userService, times(1)).retrieveUsers(condition, pageable);
     }
+    
+    @Test
+    @DisplayName("updateUser - Success")
+    void updateUser_Success() {
+        // Given
+        UUID userKey = UUID.randomUUID();
+        UserCommand.UpdateUserRequest request = UserCommand.UpdateUserRequest.builder()
+            .nickname("newNickname")
+            .profilePicture("newProfilePicture")
+            .address("newAddress")
+            .build();
+        User updatedUser = User.builder()
+            .key(userKey)
+            .loginId("testLoginId")
+            .password("newPassword")
+            .nickname("newNickname")
+            .profilePicture("newProfilePicture")
+            .address("newAddress")
+            .build();
+
+        when(userService.updateUser(userKey, request)).thenReturn(updatedUser);
+
+        // When
+        UserResponse result = userApplicationService.updateUser(userKey, request);
+
+        // Then
+        assertNotNull(result);
+        assertEquals("newNickname", result.getNickname());
+        assertEquals("newProfilePicture", result.getProfilePicture());
+        assertEquals("newAddress", result.getAddress());
+        verify(userService, times(1)).updateUser(userKey, request);
+    }
+
+    @Test
+    @DisplayName("updateUser - User Not Found")
+    void updateUser_UserNotFound() {
+        // Given
+        UUID userKey = UUID.randomUUID();
+        UserCommand.UpdateUserRequest request = UserCommand.UpdateUserRequest.builder()
+            .nickname("newNickName")
+            .profilePicture("newProfilePicture")
+            .address("newAddress")
+            .build();
+
+        doThrow(new RuntimeException("User not found")).when(userService).updateUser(userKey, request);
+
+        // When & Then
+        assertThrows(RuntimeException.class, () -> userApplicationService.updateUser(userKey, request));
+        verify(userService, times(1)).updateUser(userKey, request);
+    }
+
 }
