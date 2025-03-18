@@ -112,5 +112,26 @@ public class UserDto {
             this.profilePicture = user.getProfilePicture();
             this.loginId = user.getLoginId();
         }
+
+    }
+
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class UserUpdateRequest {
+
+        private String nickname;
+        private String address;
+        private String profilePicture;
+
+        public UserCommand.UpdateUserRequest toCommand() {
+            return UserCommand.UpdateUserRequest.builder()
+                .nickname(nickname)
+                .address(address)
+                .profilePicture(profilePicture)
+                .build();
+        }
+
     }
 }

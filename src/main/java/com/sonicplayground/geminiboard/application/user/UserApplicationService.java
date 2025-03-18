@@ -33,4 +33,10 @@ public class UserApplicationService {
         Page<User> users = userService.retrieveUsers(condition, pageable);
         return users.map(UserResponse::new);
     }
+
+
+    public UserResponse updateUser(UUID userKey, UserCommand.UpdateUserRequest request) {
+        User updatedUser = userService.updateUser(userKey, request);
+        return new UserResponse(updatedUser);
+    }
 }

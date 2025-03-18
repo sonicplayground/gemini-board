@@ -1,6 +1,8 @@
 package com.sonicplayground.geminiboard.domain.user;
 
+import com.sonicplayground.geminiboard.domain.user.UserCommand.UpdateUserRequest;
 import com.sonicplayground.geminiboard.interfaces.user.UserDto.UserSearchCondition;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -41,4 +43,13 @@ public class UserService {
 
     }
 
+    @Transactional
+    public User updateUser(UUID userKey, UpdateUserRequest request) {
+        User user = userReader.findByKey(userKey)
+            .orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
+
+        user.update(request.getNickname(), request.getAddress(), request.getProfilePicture());
+
+        return user;
+    }
 }

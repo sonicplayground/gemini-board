@@ -35,4 +35,14 @@ public class UserCommand {
                 .build();
         }
     }
+
+    @Getter
+    @Builder
+    @ToString
+    public static class UpdateUserRequest {
+
+        private final String nickname;
+        private final String address;
+        private final String profilePicture;
+    }
 }

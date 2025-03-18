@@ -4,7 +4,6 @@ import com.sonicplayground.geminiboard.application.user.UserApplicationService;
 import com.sonicplayground.geminiboard.common.response.PagedContent;
 import com.sonicplayground.geminiboard.domain.user.Gender;
 import com.sonicplayground.geminiboard.domain.user.UserType;
-import com.sonicplayground.geminiboard.interfaces.user.UserDto.UserResponse;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +12,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -35,7 +36,7 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<PagedContent<UserResponse>> getUsers(
+    public ResponseEntity<PagedContent<UserDto.UserResponse>> getUsers(
         @RequestParam(defaultValue = "0") int page,
         @RequestParam(defaultValue = "10") int size,
         @RequestParam(required = false) String nickname,
@@ -58,5 +59,12 @@ public class UserController {
         return ResponseEntity.ok(result);
     }
 
-
+    @PutMapping(value = "/{userKey}")
+    public ResponseEntity<UserDto.UserResponse> updateUser(
+        @RequestBody UserDto.UserUpdateRequest request,
+        @PathVariable String userKey) {
+        UserDto.UserResponse updatedUser = userApplicationService.updateUser(
+            UUID.fromString(userKey), request.toCommand());
+        return ResponseEntity.ok(updatedUser);
+    }
 }

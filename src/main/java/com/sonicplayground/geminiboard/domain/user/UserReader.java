@@ -2,6 +2,7 @@ package com.sonicplayground.geminiboard.domain.user;
 
 import com.sonicplayground.geminiboard.interfaces.user.UserDto.UserSearchCondition;
 import java.util.Optional;
+import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -11,6 +12,8 @@ import org.springframework.data.domain.Pageable;
 public interface UserReader {
 
     Optional<User> findByLoginId(String loginId);
+
+    Optional<User> findByKey(UUID loginId);
 
     boolean existsByLoginId(String loginId);
 

@@ -17,6 +17,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.SQLRestriction;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.util.StringUtils;
 
 @Entity
 @Getter
@@ -43,7 +44,7 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Gender gender; // 성별
 
-    private Integer age; // 나이
+    private Integer age; // 나이 todo birth
 
     @Column(name = "user_addr")
     private String address; // 주소
@@ -68,18 +69,16 @@ public class User {
         }
     }
 
-    public void update(String name, String nickname, Gender gender, Integer age, String address,
-        String profilePicture) {
-        this.name = name;
-        this.nickname = nickname;
-        this.gender = gender;
-        this.age = age;
-        this.address = address;
-        this.profilePicture = profilePicture;
-    }
-
-    public void updatePassword(String password) {
-        this.password = password;
+    public void update(String nickname, String address, String profilePicture) {
+        if (StringUtils.hasText(nickname)) {
+            this.nickname = nickname;
+        }
+        if (StringUtils.hasText(address)) {
+            this.address = address;
+        }
+        if (StringUtils.hasText(profilePicture)) {
+            this.profilePicture = profilePicture;
+        }
     }
 
     public void passwordEncode(PasswordEncoder passwordEncoder) {

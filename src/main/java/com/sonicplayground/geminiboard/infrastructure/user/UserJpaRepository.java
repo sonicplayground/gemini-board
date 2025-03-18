@@ -2,6 +2,7 @@ package com.sonicplayground.geminiboard.infrastructure.user;
 
 import com.sonicplayground.geminiboard.domain.user.User;
 import java.util.Optional;
+import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -14,4 +15,6 @@ public interface UserJpaRepository extends JpaRepository<User, Long> {
     boolean existsByLoginId(String loginId);
 
     Page<User> findAll(Specification<User> spec, Pageable pageable);
+
+    Optional<User> findByKey(UUID key);
 }

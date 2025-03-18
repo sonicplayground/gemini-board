@@ -72,6 +72,11 @@ public class UserReaderImpl implements UserReader {
     }
 
     @Override
+    public Optional<User> findByKey(UUID key) {
+        return userRepository.findByKey(key);
+    }
+
+    @Override
     public boolean existsByLoginId(String loginId) {
         return userRepository.existsByLoginId(loginId);
     }
