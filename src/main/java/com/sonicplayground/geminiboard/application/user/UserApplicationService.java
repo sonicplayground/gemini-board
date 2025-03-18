@@ -30,8 +30,7 @@ public class UserApplicationService {
     }
 
     public Page<UserResponse> getUsers(UserSearchCondition condition, Pageable pageable) {
-        userService.retrieveUsers(condition, pageable);
-
-        return Page.empty();
+        Page<User> users = userService.retrieveUsers(condition, pageable);
+        return users.map(UserResponse::new);
     }
 }

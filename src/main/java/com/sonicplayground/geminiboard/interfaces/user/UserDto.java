@@ -1,6 +1,7 @@
 package com.sonicplayground.geminiboard.interfaces.user;
 
 import com.sonicplayground.geminiboard.domain.user.Gender;
+import com.sonicplayground.geminiboard.domain.user.User;
 import com.sonicplayground.geminiboard.domain.user.UserCommand;
 import com.sonicplayground.geminiboard.domain.user.UserType;
 import jakarta.validation.constraints.NotBlank;
@@ -71,22 +72,45 @@ public class UserDto {
         }
     }
 
+    @Getter
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
     public static class UserSearchCondition {
 
-        private String seq;
-        private String key;
-        private String name;
+        private UUID key;
         private String nickname;
         private Gender gender;
-        private Integer age;
+        private Integer minAge;
+        private Integer maxAge;
         private UserType userType;
         private String loginId;
     }
 
+    @Getter
+    @ToString
     public static class UserResponse {
 
+        private final UUID userKey;
+        private final String name;
+        private final String nickname;
+        private final Gender gender;
+        private final Integer age;
+        private final String address;
+        private final UserType userType;
+        private final String profilePicture;
+        private final String loginId;
+
+        public UserResponse(User user) {
+            this.userKey = user.getKey();
+            this.name = user.getName();
+            this.nickname = user.getNickname();
+            this.gender = user.getGender();
+            this.age = user.getAge();
+            this.address = user.getAddress();
+            this.userType = user.getUserType();
+            this.profilePicture = user.getProfilePicture();
+            this.loginId = user.getLoginId();
+        }
     }
 }

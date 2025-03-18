@@ -1,8 +1,6 @@
 package com.sonicplayground.geminiboard.domain.user;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * 사용자 타입
@@ -21,7 +19,7 @@ public enum UserType {
         try {
             return UserType.valueOf(value.toUpperCase());
         } catch (IllegalArgumentException e) {
-            return null;
+            throw new IllegalArgumentException(value + " is not valid UserType");
         }
     }
 }

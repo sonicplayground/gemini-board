@@ -36,18 +36,18 @@ public class UserController {
     public ResponseEntity<Page<UserDto.UserResponse>> getUsers(
         @RequestParam(defaultValue = "0") int page,
         @RequestParam(defaultValue = "10") int size,
-        @RequestParam(required = false) String name,
         @RequestParam(required = false) String nickname,
         @RequestParam(required = false) String gender,
-        @RequestParam(required = false) Integer age,
+        @RequestParam(required = false) Integer minAge,
+        @RequestParam(required = false) Integer maxAge,
         @RequestParam(required = false) String userType
     ) {
         Pageable pageable = PageRequest.of(page, size);
         UserDto.UserSearchCondition condition = UserDto.UserSearchCondition.builder()
-            .name(name)
             .nickname(nickname)
             .gender(Gender.from(gender))
-            .age(age)
+            .minAge(minAge)
+            .maxAge(maxAge)
             .userType(UserType.from(userType))
             .build();
         Page<UserDto.UserResponse> users = userApplicationService.getUsers(condition, pageable);
