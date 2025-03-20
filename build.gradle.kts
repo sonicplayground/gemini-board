@@ -27,7 +27,7 @@ dependencies {
 	// basic spring boot web starter
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.springframework.boot:spring-boot-starter-validation")
-
+	implementation("org.springframework.boot:spring-boot-configuration-processor")
 	// spring data jpa
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 
