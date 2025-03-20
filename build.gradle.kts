@@ -24,13 +24,28 @@ repositories {
 }
 
 dependencies {
-	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-	implementation("org.springframework.boot:spring-boot-starter-validation")
+	// basic spring boot web starter
 	implementation("org.springframework.boot:spring-boot-starter-web")
+	implementation("org.springframework.boot:spring-boot-starter-validation")
+
+	// spring data jpa
+	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+
+	// spring security
 	implementation("org.springframework.boot:spring-boot-starter-security")
-	compileOnly("org.projectlombok:lombok")
+
+	// mysql
 	runtimeOnly("com.mysql:mysql-connector-j")
+
+	// lombok
 	annotationProcessor("org.projectlombok:lombok")
+	compileOnly("org.projectlombok:lombok")
+
+	// jwt 기반 인증
+	implementation("io.jsonwebtoken:jjwt-api:0.11.5")
+	runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.5")
+	runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.11.5")
+
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }

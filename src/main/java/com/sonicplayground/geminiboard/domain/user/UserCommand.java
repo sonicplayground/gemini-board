@@ -1,5 +1,6 @@
 package com.sonicplayground.geminiboard.domain.user;
 
+import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
@@ -14,7 +15,7 @@ public class UserCommand {
         private final String name;
         private final String nickname;
         private final Gender gender;
-        private final Integer age;
+        private final LocalDateTime birth;
         private final String address;
         private final UserType userType;
         private final String profilePicture;
@@ -26,7 +27,7 @@ public class UserCommand {
                 .name(name)
                 .nickname(nickname)
                 .gender(gender)
-                .age(age)
+                .birth(birth)
                 .address(address)
                 .userType(userType)
                 .profilePicture(profilePicture)
