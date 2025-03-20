@@ -43,8 +43,13 @@ public class UserService {
 
     }
 
-    public User getUser(UUID userKey) {
+    public User getUserByUserKey(UUID userKey) {
         return userReader.findByKey(userKey)
+            .orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
+    }
+
+    public User getUserByLoginId(String loginId) {
+        return userReader.findByLoginId(loginId)
             .orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
     }
 

@@ -4,15 +4,19 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.sonicplayground.geminiboard.domain.user.AuthService;
 import com.sonicplayground.geminiboard.domain.user.User;
 import com.sonicplayground.geminiboard.domain.user.UserCommand;
 import com.sonicplayground.geminiboard.domain.user.UserService;
+import com.sonicplayground.geminiboard.domain.user.UserType;
+import com.sonicplayground.geminiboard.interfaces.user.LoginDto;
 import com.sonicplayground.geminiboard.interfaces.user.UserDto.UserResponse;
 import com.sonicplayground.geminiboard.interfaces.user.UserDto.UserSearchCondition;
 import java.util.List;
@@ -33,6 +37,8 @@ class UserApplicationServiceTest {
 
     @Mock
     private UserService userService;
+    @Mock
+    private AuthService authService;
 
     @InjectMocks
     private UserApplicationService userApplicationService;
@@ -161,10 +167,12 @@ class UserApplicationServiceTest {
             .address("newAddress")
             .build();
 
-        when(userService.updateUser(userKey, request)).thenReturn(updatedUser);
 
         // When
-        UserResponse result = userApplicationService.updateUser(userKey, request);
+        LoginDto.RequesterInfo requester = new LoginDto.RequesterInfo(userKey, UserType.SERVICE_ADMIN);
+        when(userService.updateUser(userKey, request)).thenReturn(updatedUser);
+        doNothing().when(authService).checkAuthority(requester, userKey);
+        UserResponse result = userApplicationService.updateUser(requester, userKey, request);
 
         // Then
         assertNotNull(result);
@@ -185,12 +193,17 @@ class UserApplicationServiceTest {
             .address("newAddress")
             .build();
 
+
+        // When
         doThrow(new RuntimeException("User not found")).when(userService)
             .updateUser(userKey, request);
 
+        LoginDto.RequesterInfo requester = new LoginDto.RequesterInfo(userKey, UserType.SERVICE_USER);
+        doNothing().when(authService).checkAuthority(requester, userKey);
+
         // When & Then
         assertThrows(RuntimeException.class,
-            () -> userApplicationService.updateUser(userKey, request));
+            () -> userApplicationService.updateUser(requester, userKey, request));
         verify(userService, times(1)).updateUser(userKey, request);
     }
 
@@ -200,8 +213,11 @@ class UserApplicationServiceTest {
         // Given
         UUID userKey = UUID.randomUUID();
 
+        LoginDto.RequesterInfo requester = new LoginDto.RequesterInfo(userKey, UserType.SERVICE_USER);
+        doNothing().when(authService).checkAuthority(requester, userKey);
+
         // When
-        userApplicationService.deleteUser(userKey);
+        userApplicationService.deleteUser(requester, userKey);
 
         // Then
         verify(userService, times(1)).deleteUser(userKey);
@@ -214,8 +230,10 @@ class UserApplicationServiceTest {
         UUID userKey = UUID.randomUUID();
         doThrow(new RuntimeException("User not found")).when(userService).deleteUser(userKey);
 
+        LoginDto.RequesterInfo requester = new LoginDto.RequesterInfo(userKey, UserType.SERVICE_ADMIN);
         // When & Then
-        assertThrows(RuntimeException.class, () -> userApplicationService.deleteUser(userKey));
+        doNothing().when(authService).checkAuthority(requester, userKey);
+        assertThrows(RuntimeException.class, () -> userApplicationService.deleteUser(requester, userKey));
         verify(userService, times(1)).deleteUser(userKey);
     }
 
@@ -232,16 +250,17 @@ class UserApplicationServiceTest {
             .nickname("testNickname")
             .build();
 
-        when(userService.getUser(userKey)).thenReturn(user);
-
         // When
-        UserResponse result = userApplicationService.getUser(userKey);
+        LoginDto.RequesterInfo requester = new LoginDto.RequesterInfo(userKey, UserType.SERVICE_ADMIN);
+        when(userService.getUserByUserKey(userKey)).thenReturn(user);
+        doNothing().when(authService).checkAuthority(requester, userKey);
+        UserResponse result = userApplicationService.getUser(requester, userKey);
 
         // Then
         assertNotNull(result);
         assertEquals("testLoginId", result.getLoginId());
         assertEquals("testNickname", result.getNickname());
-        verify(userService, times(1)).getUser(userKey);
+        verify(userService, times(1)).getUserByUserKey(userKey);
     }
 
     @Test
@@ -249,11 +268,14 @@ class UserApplicationServiceTest {
     void getUser_UserNotFound() {
         // Given
         UUID userKey = UUID.randomUUID();
-        doThrow(new RuntimeException("User not found")).when(userService).getUser(userKey);
+        doThrow(new RuntimeException("User not found")).when(userService).getUserByUserKey(userKey);
 
         // When & Then
-        assertThrows(RuntimeException.class, () -> userApplicationService.getUser(userKey));
-        verify(userService, times(1)).getUser(userKey);
+        LoginDto.RequesterInfo requester = new LoginDto.RequesterInfo(userKey, UserType.SERVICE_ADMIN);
+
+        doNothing().when(authService).checkAuthority(requester, userKey);
+        assertThrows(RuntimeException.class, () -> userApplicationService.getUser(requester, userKey));
+        verify(userService, times(1)).getUserByUserKey(userKey);
     }
 
 }

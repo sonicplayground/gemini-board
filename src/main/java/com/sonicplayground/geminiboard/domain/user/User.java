@@ -1,5 +1,6 @@
 package com.sonicplayground.geminiboard.domain.user;
 
+import com.sonicplayground.geminiboard.domain.common.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -9,6 +10,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
+import java.time.LocalDateTime;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,7 +29,7 @@ import org.springframework.util.StringUtils;
 @Table(name = "users")
 @SQLRestriction("is_valid = true")
 @SQLDelete(sql = "UPDATE users SET is_valid = false WHERE user_seq = ?")
-public class User {
+public class User extends BaseEntity {
 
     @Id
     @Column(name = "user_seq")
@@ -45,7 +47,7 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Gender gender; // 성별
 
-    private Integer age; // 나이 todo birth
+    private LocalDateTime birth; // 나이
 
     @Column(name = "user_addr")
     private String address; // 주소

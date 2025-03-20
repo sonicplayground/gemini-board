@@ -1,10 +1,12 @@
 package com.sonicplayground.geminiboard.interfaces.user;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.sonicplayground.geminiboard.domain.user.Gender;
 import com.sonicplayground.geminiboard.domain.user.User;
 import com.sonicplayground.geminiboard.domain.user.UserCommand;
 import com.sonicplayground.geminiboard.domain.user.UserType;
 import jakarta.validation.constraints.NotBlank;
+import java.time.LocalDateTime;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -32,8 +34,9 @@ public class UserDto {
         private final String nickname;
         @NotBlank(message = "require param : gender")
         private final Gender gender;
-        @NotBlank(message = "require param : age")
-        private final Integer age;
+        @NotBlank(message = "require param : birth")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+        private final LocalDateTime birth;
         private final String address;
         @NotBlank(message = "require param : userType")
         private final UserType userType;
@@ -43,13 +46,13 @@ public class UserDto {
         @NotBlank(message = "require param : password")
         private final String password;
 
-        public RegisterRequest(String name, String nickname, Gender gender, Integer age,
+        public RegisterRequest(String name, String nickname, Gender gender, LocalDateTime birth,
             String address, String userType, String profilePicture, String loginId,
             String password) {
             this.name = name;
             this.nickname = nickname;
             this.gender = gender;
-            this.age = age;
+            this.birth = birth;
             this.address = address;
             this.userType = UserType.from(userType);
             this.profilePicture = profilePicture;
@@ -62,7 +65,7 @@ public class UserDto {
                 .name(name)
                 .nickname(nickname)
                 .gender(gender)
-                .age(age)
+                .birth(birth)
                 .address(address)
                 .userType(userType)
                 .profilePicture(profilePicture)
@@ -95,7 +98,7 @@ public class UserDto {
         private final String name;
         private final String nickname;
         private final Gender gender;
-        private final Integer age;
+        private final LocalDateTime birth;
         private final String address;
         private final UserType userType;
         private final String profilePicture;
@@ -106,7 +109,7 @@ public class UserDto {
             this.name = user.getName();
             this.nickname = user.getNickname();
             this.gender = user.getGender();
-            this.age = user.getAge();
+            this.birth = user.getBirth();
             this.address = user.getAddress();
             this.userType = user.getUserType();
             this.profilePicture = user.getProfilePicture();
@@ -116,7 +119,6 @@ public class UserDto {
     }
 
     @Getter
-    @Builder
     @AllArgsConstructor
     @NoArgsConstructor
     public static class UserUpdateRequest {
