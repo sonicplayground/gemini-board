@@ -119,7 +119,6 @@ public class UserDto {
     }
 
     @Getter
-    @Builder
     @AllArgsConstructor
     @NoArgsConstructor
     public static class UserUpdateRequest {

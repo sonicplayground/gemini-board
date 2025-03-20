@@ -1,8 +1,10 @@
 package com.sonicplayground.geminiboard.application.user;
 
+import com.sonicplayground.geminiboard.domain.user.AuthService;
 import com.sonicplayground.geminiboard.domain.user.User;
 import com.sonicplayground.geminiboard.domain.user.UserCommand;
 import com.sonicplayground.geminiboard.domain.user.UserService;
+import com.sonicplayground.geminiboard.interfaces.user.LoginDto;
 import com.sonicplayground.geminiboard.interfaces.user.UserDto.UserResponse;
 import com.sonicplayground.geminiboard.interfaces.user.UserDto.UserSearchCondition;
 import java.util.UUID;
@@ -18,6 +20,7 @@ import org.springframework.stereotype.Service;
 public class UserApplicationService {
 
     private final UserService userService;
+    private final AuthService authService;
 
     public UUID createUser(UserCommand.CreateUserRequest request) {
         log.debug("createUser request info: {}", request.toString());
@@ -35,17 +38,21 @@ public class UserApplicationService {
     }
 
 
-    public UserResponse updateUser(UUID userKey, UserCommand.UpdateUserRequest request) {
+    public UserResponse updateUser(LoginDto.RequesterInfo requester, UUID userKey,
+        UserCommand.UpdateUserRequest request) {
+        authService.checkAuthority(requester, userKey);
         User updatedUser = userService.updateUser(userKey, request);
         return new UserResponse(updatedUser);
     }
 
-    public void deleteUser(UUID userKey) {
+    public void deleteUser(LoginDto.RequesterInfo requester, UUID userKey) {
+        authService.checkAuthority(requester, userKey);
         userService.deleteUser(userKey);
     }
 
-    public UserResponse getUser(UUID uuid) {
-        User user = userService.getUser(uuid);
+    public UserResponse getUser(LoginDto.RequesterInfo requester, UUID userKey) {
+        authService.checkAuthority(requester, userKey);
+        User user = userService.getUserByUserKey(userKey);
         return new UserResponse(user);
     }
 }

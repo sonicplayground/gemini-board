@@ -12,10 +12,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,14 +32,8 @@ public class UserController {
 
     private final UserApplicationService userApplicationService;
 
-    @PostMapping
-    public ResponseEntity<UserDto.RegisterResponse> createUser(
-        @RequestBody UserDto.RegisterRequest request) {
-        UUID userKey = userApplicationService.createUser(request.toCommand());
-        return ResponseEntity.ok(new UserDto.RegisterResponse(userKey));
-    }
-
     @GetMapping
+    @PreAuthorize("hasAuthority('SERVICE_ADMIN')")
     public ResponseEntity<PagedContent<UserDto.UserResponse>> getUsers(
         @RequestParam(defaultValue = "0") int page,
         @RequestParam(defaultValue = "10") int size,
@@ -62,24 +58,30 @@ public class UserController {
     }
 
     @GetMapping(value = "/{userKey}")
-    public ResponseEntity<UserDto.UserResponse> getUser(@PathVariable String userKey) {
-        UserResponse user = userApplicationService.getUser(UUID.fromString(userKey));
+    public ResponseEntity<UserDto.UserResponse> getUser(@AuthenticationPrincipal User requester,
+        @PathVariable String userKey) {
+        LoginDto.RequesterInfo requesterInfo = LoginDto.RequesterInfo.from(requester);
+        UserResponse user = userApplicationService.getUser(requesterInfo, UUID.fromString(userKey));
         return ResponseEntity.ok(user);
     }
 
     @PutMapping(value = "/{userKey}")
     public ResponseEntity<UserDto.UserResponse> updateUser(
+        @AuthenticationPrincipal User requester,
         @RequestBody UserDto.UserUpdateRequest request,
         @PathVariable String userKey) {
-        UserDto.UserResponse updatedUser = userApplicationService.updateUser(
+        LoginDto.RequesterInfo requesterInfo = LoginDto.RequesterInfo.from(requester);
+        UserDto.UserResponse updatedUser = userApplicationService.updateUser(requesterInfo,
             UUID.fromString(userKey), request.toCommand());
         return ResponseEntity.ok(updatedUser);
     }
 
 
     @DeleteMapping(value = "/{userKey}")
-    public ResponseEntity<UserDto.DeleteResponse> deleteUser(@PathVariable String userKey) {
-        userApplicationService.deleteUser(UUID.fromString(userKey));
+    public ResponseEntity<UserDto.DeleteResponse> deleteUser(
+        @AuthenticationPrincipal User requester, @PathVariable String userKey) {
+        LoginDto.RequesterInfo requesterInfo = LoginDto.RequesterInfo.from(requester);
+        userApplicationService.deleteUser(requesterInfo, UUID.fromString(userKey));
         UserDto.DeleteResponse response = new UserDto.DeleteResponse("User deleted successfully");
         return ResponseEntity.ok(response);
     }
