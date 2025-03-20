@@ -46,15 +46,15 @@ public class UserReaderImpl implements UserReader {
 
             // 나이 범위 검색 (Between) - 만나이 기준
             if (minAge != null && maxAge != null) {
-                predicates.add(cb.between(root.get("birth"), LocalDateTime.now().minusYears(maxAge),
-                    LocalDateTime.now().minusYears(minAge)));
+                LocalDateTime minBirthDate = LocalDateTime.now().minusYears(maxAge);
+                LocalDateTime maxBirthDate = LocalDateTime.now().minusYears(minAge);
+                predicates.add(cb.between(root.get("birth"), minBirthDate, maxBirthDate));
             } else if (minAge != null) {
-                predicates.add(cb.lessThanOrEqualTo(root.get("birth"),
-                    LocalDateTime.now().minusYears(minAge)));
+                LocalDateTime minBirthDate = LocalDateTime.now().minusYears(minAge);
+                predicates.add(cb.lessThanOrEqualTo(root.get("birth"), minBirthDate));
             } else if (maxAge != null) {
-                predicates.add(
-                    cb.greaterThanOrEqualTo(root.get("birth"),
-                        LocalDateTime.now().minusYears(maxAge)));
+                LocalDateTime maxBirthDate = LocalDateTime.now().minusYears(maxAge);
+                predicates.add(cb.greaterThanOrEqualTo(root.get("birth"), maxBirthDate));
             }
 
             // 성별 검색 (Equals)
