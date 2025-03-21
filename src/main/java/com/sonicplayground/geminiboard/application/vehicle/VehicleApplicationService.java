@@ -75,4 +75,10 @@ public class VehicleApplicationService {
         authService.checkAuthority(requesterInfo, vehicle.getOwner().getKey());
         vehicleService.updateMileage(vehicle, mileage);
     }
+
+    public void deleteVehicle(RequesterInfo requesterInfo, UUID vehicleKey) {
+        Vehicle vehicle = vehicleService.getVehicle(vehicleKey);
+        authService.checkAuthority(requesterInfo, vehicle.getOwner().getKey());
+        vehicleService.deleteVehicle(vehicle);
+    }
 }

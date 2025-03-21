@@ -24,7 +24,7 @@ public class VehicleDto {
     }
 
     @AllArgsConstructor
-    public static class MaintenanceResponse {
+    public static class ResultMessageResponse {
 
         public String result;
     }

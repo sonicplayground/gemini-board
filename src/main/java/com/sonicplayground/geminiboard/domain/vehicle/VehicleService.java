@@ -85,4 +85,8 @@ public class VehicleService {
     public void updateMileage(Vehicle vehicle, int mileage) {
         vehicle.updateMileage(mileage);
     }
+
+    public void deleteVehicle(Vehicle vehicle) {
+        vehicleStore.delete(vehicle);
+    }
 }
