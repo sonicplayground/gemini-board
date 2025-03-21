@@ -34,8 +34,8 @@ dependencies {
 	// spring security
 	implementation("org.springframework.boot:spring-boot-starter-security")
 
-	// mysql
-	runtimeOnly("com.mysql:mysql-connector-j")
+	// mariadb
+	implementation("org.mariadb.jdbc:mariadb-java-client")
 
 	// lombok
 	annotationProcessor("org.projectlombok:lombok")
