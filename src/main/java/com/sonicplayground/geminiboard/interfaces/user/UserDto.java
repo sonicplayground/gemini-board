@@ -1,6 +1,7 @@
 package com.sonicplayground.geminiboard.interfaces.user;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.sonicplayground.geminiboard.domain.common.Constant;
 import com.sonicplayground.geminiboard.domain.user.Gender;
 import com.sonicplayground.geminiboard.domain.user.User;
 import com.sonicplayground.geminiboard.domain.user.UserCommand;
@@ -35,7 +36,7 @@ public class UserDto {
         @NotBlank(message = "require param : gender")
         private final Gender gender;
         @NotBlank(message = "require param : birth")
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constant.DEFAULT_DATE_TIME_FORMAT)
         private final LocalDateTime birth;
         private final String address;
         @NotBlank(message = "require param : userType")

@@ -19,7 +19,9 @@ import org.springframework.web.cors.CorsUtils;
 @Configuration
 @RequiredArgsConstructor
 public class SecurityConfig {
+
     private final JwtAuthFilter jwtAuthenticationFilter;
+    private final JwtAuthEntryPoint jwtAuthEntryPoint;
 
     private final String[] allowed = {"/", "/api/v1/login/**", "/api/v1/users/**"};
 
@@ -38,12 +40,15 @@ public class SecurityConfig {
             // 요청 권한 설정
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll() // CORS Preflight 요청 허용
-                .requestMatchers(allowed)
-                .permitAll() // `/api/v1/**` 모든 요청 허용
+                .requestMatchers(allowed) // 허용 목록
+                .permitAll()
                 .anyRequest()
                 .authenticated() // 그 외 요청은 인증 필요
             )
             .addFilterBefore(jwtAuthenticationFilter, BasicAuthenticationFilter.class)
+            .exceptionHandling(
+                exception -> exception.authenticationEntryPoint(jwtAuthEntryPoint)
+            )
             .build();
     }
 
