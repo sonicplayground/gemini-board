@@ -11,4 +11,7 @@ public interface Constant {
     String TIRE = "tire";
     String ENGINE_OIL = "engineOil";
     String BRAKE_PAD = "brakePad";
+
+    int DEFAULT_ANNUAL_MILEAGE = 10000;
+
 }

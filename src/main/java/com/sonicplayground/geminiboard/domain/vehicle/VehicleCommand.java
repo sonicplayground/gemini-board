@@ -1,6 +1,7 @@
 package com.sonicplayground.geminiboard.domain.vehicle;
 
 import com.sonicplayground.geminiboard.domain.user.User;
+import java.time.Year;
 import java.util.Map;
 import java.util.UUID;
 import lombok.Builder;
@@ -31,7 +32,7 @@ public class VehicleCommand {
                 .manufacturer(manufacturer)
                 .status(status)
                 .modelName(modelName)
-                .purchaseYear(purchaseYear)
+                .purchaseYear(Year.of(purchaseYear))
                 .registrationPicture(registrationPicture)
                 .memo(memo)
                 .owner(user)

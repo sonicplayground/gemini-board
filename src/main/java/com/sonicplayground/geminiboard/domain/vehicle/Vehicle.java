@@ -1,10 +1,12 @@
 package com.sonicplayground.geminiboard.domain.vehicle;
 
+import static com.sonicplayground.geminiboard.domain.common.Constant.DEFAULT_ANNUAL_MILEAGE;
 import static com.sonicplayground.geminiboard.domain.common.Constant.VEHICLE_BRAKE_PAD_REPLACEMENT_DATE;
 import static com.sonicplayground.geminiboard.domain.common.Constant.VEHICLE_ENGINE_OIL_CHANGE_DATE;
 import static com.sonicplayground.geminiboard.domain.common.Constant.VEHICLE_MILEAGE;
 import static com.sonicplayground.geminiboard.domain.common.Constant.VEHICLE_TIRE_REPLACEMENT_DATE;
 
+import com.sonicplayground.geminiboard.common.util.DateTImeUtil;
 import com.sonicplayground.geminiboard.domain.common.BaseEntity;
 import com.sonicplayground.geminiboard.domain.user.User;
 import com.sonicplayground.geminiboard.domain.vehicle.VehicleCommand.UpdateVehicleRequest;
@@ -19,6 +21,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import java.time.LocalDate;
+import java.time.Year;
 import java.util.Map;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
@@ -53,7 +56,7 @@ public class Vehicle extends BaseEntity {
     @Column(nullable = false, unique = true, name = "vehicle_key")
     private UUID key; // GUID
 
-    @Column(nullable = false, name = "vehicle_nm", length = 25)
+    @Column(nullable = false, unique = true, name = "vehicle_nm", length = 25)
     private String name; // 닉네임
 
     private String vehiclePicture; // 차량 사진 URL
@@ -71,7 +74,7 @@ public class Vehicle extends BaseEntity {
     private String modelName; // 모델명
 
     @Column(name = "purchase_year", nullable = false)
-    private int purchaseYear; // 차량 연식
+    private Year purchaseYear; // 차량 연식
 
     private String registrationPicture; // 차량 등록증 사진 URL
 
@@ -93,14 +96,20 @@ public class Vehicle extends BaseEntity {
         }
 
         if (this.status == null) {
-            String cand = String.format("%d-01-01", this.purchaseYear);
+            String cand = String.format("%d-01-01", this.purchaseYear.getValue());
             this.status = Map.of(
                 VEHICLE_MILEAGE,
-                String.valueOf((LocalDate.now().getYear() - this.purchaseYear) * 10000),
+                String.valueOf(
+                    (LocalDate.now().getYear() - this.purchaseYear.getValue())
+                        * DEFAULT_ANNUAL_MILEAGE),
                 VEHICLE_TIRE_REPLACEMENT_DATE, cand,
                 VEHICLE_ENGINE_OIL_CHANGE_DATE, cand,
                 VEHICLE_BRAKE_PAD_REPLACEMENT_DATE, cand
             );
+        }
+
+        if (LocalDate.now().isBefore(this.purchaseYear.atDay(1))) {
+            throw new IllegalArgumentException("차량 연식은 현재 년도보다 클 수 없습니다.");
         }
     }
 
@@ -109,23 +118,17 @@ public class Vehicle extends BaseEntity {
     }
 
     public void replaceTireOn(LocalDate date) {
-        if (date == null) {
-            date = LocalDate.now();
-        }
+        date = DateTImeUtil.validateAndGetDate(date);
         this.status.put(VEHICLE_TIRE_REPLACEMENT_DATE, String.valueOf(date));
     }
 
     public void changeEngineOilOn(LocalDate date) {
-        if (date == null) {
-            date = LocalDate.now();
-        }
+        date = DateTImeUtil.validateAndGetDate(date);
         this.status.put(VEHICLE_ENGINE_OIL_CHANGE_DATE, String.valueOf(date));
     }
 
     public void replaceBreakPadOn(LocalDate date) {
-        if (date == null) {
-            date = LocalDate.now();
-        }
+        date = DateTImeUtil.validateAndGetDate(date);
         this.status.put(VEHICLE_BRAKE_PAD_REPLACEMENT_DATE, String.valueOf(date));
     }
 

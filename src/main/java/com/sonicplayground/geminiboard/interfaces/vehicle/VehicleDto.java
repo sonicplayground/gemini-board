@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.PositiveOrZero;
 import java.time.LocalDate;
+import java.time.Year;
 import java.util.Map;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
@@ -92,7 +93,7 @@ public class VehicleDto {
         private final String manufacturer;
         private final Map<String, String> status;
         private final String modelName;
-        private final Integer purchaseYear;
+        private final Year purchaseYear;
         private final String registrationPicture;
         private final String memo;
         private final UUID ownerUserKey;
