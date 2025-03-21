@@ -42,6 +42,7 @@ public class VehicleCommand {
     @Getter
     @Builder
     public static class UpdateVehicleRequest {
+
         private final String name;
         private final String vehiclePicture;
         private final String modelName;

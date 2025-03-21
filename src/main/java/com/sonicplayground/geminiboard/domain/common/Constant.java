@@ -1,6 +1,7 @@
 package com.sonicplayground.geminiboard.domain.common;
 
 public interface Constant {
+
     String DEFAULT_DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
     String VEHICLE_MILEAGE = "mileage";
     String VEHICLE_TIRE_REPLACEMENT_DATE = "tireReplacementDate";

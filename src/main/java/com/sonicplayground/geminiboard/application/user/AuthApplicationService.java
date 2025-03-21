@@ -15,6 +15,7 @@ public class AuthApplicationService {
 
     private final AuthService authService;
     private final UserService userService;
+
     public LoginDto.SignInResponse signIn(String loginId, String password) {
         log.debug("signIn request info: loginId={}, password={}", loginId, password);
 

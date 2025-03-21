@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class VehicleService {
+
     private final VehicleReader vehicleReader;
     private final VehicleStore vehicleStore;
 

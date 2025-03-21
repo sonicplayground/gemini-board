@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 public interface VehicleReader {
 
     Optional<Vehicle> findByKey(UUID vehicleKey);
+
     Optional<Vehicle> findByName(String vehicleName);
 
     Page<Vehicle> findAll(VehicleSearchCondition condition, Pageable pageable);

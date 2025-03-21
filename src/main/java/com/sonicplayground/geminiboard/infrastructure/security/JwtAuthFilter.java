@@ -26,7 +26,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     private final JwtTokenProvider tokenProvider;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, @NonNull HttpServletResponse response,
+    protected void doFilterInternal(HttpServletRequest request,
+        @NonNull HttpServletResponse response,
         FilterChain filterChain) throws ServletException, IOException {
         String token = Optional.ofNullable(request.getHeader("Authorization"))
             .filter(t -> t.startsWith("Bearer "))

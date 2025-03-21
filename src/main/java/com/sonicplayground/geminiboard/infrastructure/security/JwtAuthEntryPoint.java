@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class JwtAuthEntryPoint implements AuthenticationEntryPoint {
+
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override

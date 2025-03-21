@@ -11,7 +11,6 @@ import com.sonicplayground.geminiboard.interfaces.user.LoginDto;
 import com.sonicplayground.geminiboard.interfaces.user.LoginDto.RequesterInfo;
 import com.sonicplayground.geminiboard.interfaces.vehicle.VehicleDto.VehicleResponse;
 import com.sonicplayground.geminiboard.interfaces.vehicle.VehicleDto.VehicleSearchCondition;
-import jakarta.validation.constraints.PositiveOrZero;
 import java.time.LocalDate;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -46,7 +45,8 @@ public class VehicleApplicationService {
         VehicleSearchCondition condition, Pageable pageable) {
 
         UUID targetUserKey = vehicleService.getUserKeyByPolicy(requesterInfo, condition);
-        User targetUser = targetUserKey == null ? null : userService.getUserByUserKey(targetUserKey);
+        User targetUser =
+            targetUserKey == null ? null : userService.getUserByUserKey(targetUserKey);
         condition.setOwnerUserSeq(targetUser);
 
         Page<Vehicle> vehicles = vehicleService.getVehicles(condition, pageable);

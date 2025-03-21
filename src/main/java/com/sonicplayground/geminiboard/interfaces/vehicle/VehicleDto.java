@@ -5,7 +5,6 @@ import com.sonicplayground.geminiboard.domain.vehicle.Vehicle;
 import com.sonicplayground.geminiboard.domain.vehicle.VehicleCommand;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 import java.time.LocalDate;
 import java.util.Map;
@@ -33,6 +32,7 @@ public class VehicleDto {
     @AllArgsConstructor
     @Getter
     public static class MaintenanceRequest {
+
         @NotBlank(message = "require param : maintenanceType")
         private String maintenanceType;
         private LocalDate changeDate;
@@ -41,6 +41,7 @@ public class VehicleDto {
     @AllArgsConstructor
     @Getter
     public static class UpdateMileageRequest {
+
         @PositiveOrZero(message = "mileage must be positive")
         private int mileage;
     }
@@ -137,11 +138,12 @@ public class VehicleDto {
             this.ownerUserKey = null;
         }
     }
-    
+
     @Getter
     @AllArgsConstructor
     @NoArgsConstructor
     public static class UpdateVehicleRequest {
+
         private String name;
         private String vehiclePicture;
         private String modelName;

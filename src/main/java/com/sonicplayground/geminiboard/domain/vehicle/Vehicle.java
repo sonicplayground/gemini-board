@@ -95,7 +95,8 @@ public class Vehicle extends BaseEntity {
         if (this.status == null) {
             String cand = String.format("%d-01-01", this.purchaseYear);
             this.status = Map.of(
-                VEHICLE_MILEAGE, String.valueOf((LocalDate.now().getYear() - this.purchaseYear) * 10000),
+                VEHICLE_MILEAGE,
+                String.valueOf((LocalDate.now().getYear() - this.purchaseYear) * 10000),
                 VEHICLE_TIRE_REPLACEMENT_DATE, cand,
                 VEHICLE_ENGINE_OIL_CHANGE_DATE, cand,
                 VEHICLE_BRAKE_PAD_REPLACEMENT_DATE, cand
@@ -129,7 +130,7 @@ public class Vehicle extends BaseEntity {
     }
 
     public void updateBasicInfos(UpdateVehicleRequest command) {
-        if (StringUtils.hasText(command.getName())){
+        if (StringUtils.hasText(command.getName())) {
             this.name = command.getName();
         }
         if (StringUtils.hasText(command.getVehiclePicture())) {

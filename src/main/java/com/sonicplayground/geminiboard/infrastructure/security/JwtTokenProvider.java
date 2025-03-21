@@ -13,12 +13,14 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class JwtTokenProvider {
+
     private final JwtProperties jwtProperties;
 
     public String createToken(String userInfo) {
         log.debug("createToken userInfo: {}", userInfo);
         return Jwts.builder()
-            .signWith(new SecretKeySpec(jwtProperties.getSecretKey().getBytes(), SignatureAlgorithm.HS512.getJcaName()))
+            .signWith(new SecretKeySpec(jwtProperties.getSecretKey().getBytes(),
+                SignatureAlgorithm.HS512.getJcaName()))
             .setSubject(userInfo)
             .setIssuer(jwtProperties.getIssuer())
             .setIssuedAt(Timestamp.valueOf(LocalDateTime.now()))
