@@ -1,13 +1,17 @@
 package com.sonicplayground.geminiboard.interfaces.vehicle;
 
+import com.sonicplayground.geminiboard.domain.user.User;
+import com.sonicplayground.geminiboard.domain.vehicle.Vehicle;
 import com.sonicplayground.geminiboard.domain.vehicle.VehicleCommand;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import java.util.Map;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 public class VehicleDto {
 
@@ -49,6 +53,64 @@ public class VehicleDto {
                 .memo(memo)
                 .ownerUserKey(UUID.fromString(userKeyStr))
                 .build();
+        }
+    }
+
+    @Getter
+    @ToString
+    public static class VehicleResponse {
+
+        private final UUID vehicleKey;
+        private final String name;
+        private final String vehiclePicture;
+        private final String vin;
+        private final String manufacturer;
+        private final Map<String, String> status;
+        private final String modelName;
+        private final Integer purchaseYear;
+        private final String registrationPicture;
+        private final String memo;
+        private final UUID ownerUserKey;
+
+        public VehicleResponse(Vehicle vehicle) {
+            this.vehicleKey = vehicle.getKey();
+            this.name = vehicle.getName();
+            this.vehiclePicture = vehicle.getVehiclePicture();
+            this.vin = vehicle.getVin();
+            this.manufacturer = vehicle.getManufacturer();
+            this.status = vehicle.getStatus();
+            this.modelName = vehicle.getModelName();
+            this.purchaseYear = vehicle.getPurchaseYear();
+            this.registrationPicture = vehicle.getRegistrationPicture();
+            this.memo = vehicle.getMemo();
+            this.ownerUserKey = vehicle.getOwner().getKey();
+        }
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class VehicleSearchCondition {
+
+        private int page;
+        private int size;
+        private String vin;
+        private String ownerUserKey;
+        private Long ownerUserSeq;
+        private String manufacturer;
+        private String modelName;
+        private String vehicleKey;
+        private Integer minMileage;
+        private Integer maxMileage;
+
+        public void setOwnerUserSeq(User user) {
+            if (user == null) {
+                this.ownerUserSeq = null;
+            } else {
+                this.ownerUserSeq = user.getSeq();
+            }
+            this.ownerUserKey = null;
         }
     }
 }
