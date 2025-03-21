@@ -19,8 +19,10 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -89,6 +91,49 @@ public class VehicleController {
         PagedContent<VehicleDto.VehicleResponse> result = new PagedContent<>(vehicles);
 
         return ResponseEntity.ok(result);
+    }
 
+    @PutMapping("/{vehicleKey}")
+    @PreAuthorize("hasAnyAuthority('SERVICE_ADMIN', 'SERVICE_USER')")
+    public ResponseEntity<VehicleDto.VehicleResponse> updateVehicle(
+        @AuthenticationPrincipal User requester,
+        @PathVariable UUID vehicleKey,
+        @RequestBody @Valid VehicleDto.UpdateVehicleRequest request) {
+        LoginDto.RequesterInfo requesterInfo = RequesterInfo.from(requester);
+
+        VehicleDto.VehicleResponse result = vehicleApplicationService.updateVehicle(requesterInfo,
+            vehicleKey, request.toCommand());
+
+        return ResponseEntity.ok(result);
+    }
+
+    @PatchMapping("/{vehicleKey}/maintenance")
+    @PreAuthorize("hasAnyAuthority('SERVICE_ADMIN', 'SERVICE_USER')")
+    public ResponseEntity<VehicleDto.MaintenanceResponse> replaceTire(
+        @AuthenticationPrincipal User requester,
+        @Valid @RequestBody VehicleDto.MaintenanceRequest request,
+        @PathVariable UUID vehicleKey) {
+        LoginDto.RequesterInfo requesterInfo = RequesterInfo.from(requester);
+
+        vehicleApplicationService.replaceEquipment(requesterInfo,
+            vehicleKey, request.getMaintenanceType(), request.getChangeDate());
+
+        VehicleDto.MaintenanceResponse result = new VehicleDto.MaintenanceResponse("success");
+        return ResponseEntity.ok(result);
+    }
+
+    @PatchMapping("/{vehicleKey}/mileage")
+    @PreAuthorize("hasAnyAuthority('SERVICE_ADMIN', 'SERVICE_USER')")
+    public ResponseEntity<VehicleDto.MaintenanceResponse> updateMileage(
+        @AuthenticationPrincipal User requester,
+        @Valid @RequestBody VehicleDto.UpdateMileageRequest request,
+        @PathVariable UUID vehicleKey) {
+        LoginDto.RequesterInfo requesterInfo = RequesterInfo.from(requester);
+
+        vehicleApplicationService.updateMileage(requesterInfo,
+            vehicleKey, request.getMileage());
+
+        VehicleDto.MaintenanceResponse result = new VehicleDto.MaintenanceResponse("success");
+        return ResponseEntity.ok(result);
     }
 }

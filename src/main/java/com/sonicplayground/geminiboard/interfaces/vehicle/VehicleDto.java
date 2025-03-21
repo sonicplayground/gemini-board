@@ -5,6 +5,9 @@ import com.sonicplayground.geminiboard.domain.vehicle.Vehicle;
 import com.sonicplayground.geminiboard.domain.vehicle.VehicleCommand;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
+import java.time.LocalDate;
 import java.util.Map;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
@@ -19,6 +22,27 @@ public class VehicleDto {
     public static class CreateVehicleResponse {
 
         public UUID vehicleKey;
+    }
+
+    @AllArgsConstructor
+    public static class MaintenanceResponse {
+
+        public String result;
+    }
+
+    @AllArgsConstructor
+    @Getter
+    public static class MaintenanceRequest {
+        @NotBlank(message = "require param : maintenanceType")
+        private String maintenanceType;
+        private LocalDate changeDate;
+    }
+
+    @AllArgsConstructor
+    @Getter
+    public static class UpdateMileageRequest {
+        @PositiveOrZero(message = "mileage must be positive")
+        private int mileage;
     }
 
     @Getter
@@ -111,6 +135,27 @@ public class VehicleDto {
                 this.ownerUserSeq = user.getSeq();
             }
             this.ownerUserKey = null;
+        }
+    }
+    
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class UpdateVehicleRequest {
+        private String name;
+        private String vehiclePicture;
+        private String modelName;
+        private String registrationPicture;
+        private String memo;
+
+        public VehicleCommand.UpdateVehicleRequest toCommand() {
+            return VehicleCommand.UpdateVehicleRequest.builder()
+                .name(name)
+                .vehiclePicture(vehiclePicture)
+                .modelName(modelName)
+                .registrationPicture(registrationPicture)
+                .memo(memo)
+                .build();
         }
     }
 }

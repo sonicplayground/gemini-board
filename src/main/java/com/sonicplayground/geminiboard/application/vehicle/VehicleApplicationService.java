@@ -5,11 +5,14 @@ import com.sonicplayground.geminiboard.domain.user.User;
 import com.sonicplayground.geminiboard.domain.user.UserService;
 import com.sonicplayground.geminiboard.domain.vehicle.Vehicle;
 import com.sonicplayground.geminiboard.domain.vehicle.VehicleCommand.CreateVehicleRequest;
+import com.sonicplayground.geminiboard.domain.vehicle.VehicleCommand.UpdateVehicleRequest;
 import com.sonicplayground.geminiboard.domain.vehicle.VehicleService;
 import com.sonicplayground.geminiboard.interfaces.user.LoginDto;
 import com.sonicplayground.geminiboard.interfaces.user.LoginDto.RequesterInfo;
 import com.sonicplayground.geminiboard.interfaces.vehicle.VehicleDto.VehicleResponse;
 import com.sonicplayground.geminiboard.interfaces.vehicle.VehicleDto.VehicleSearchCondition;
+import jakarta.validation.constraints.PositiveOrZero;
+import java.time.LocalDate;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -49,5 +52,27 @@ public class VehicleApplicationService {
         Page<Vehicle> vehicles = vehicleService.getVehicles(condition, pageable);
 
         return vehicles.map(VehicleResponse::new);
+    }
+
+    public VehicleResponse updateVehicle(RequesterInfo requesterInfo, UUID vehicleKey,
+        UpdateVehicleRequest command) {
+        Vehicle vehicle = vehicleService.getVehicle(vehicleKey);
+        authService.checkAuthority(requesterInfo, vehicle.getOwner().getKey());
+        Vehicle updated = vehicleService.updateVehicle(vehicle, command);
+        return new VehicleResponse(updated);
+    }
+
+    public void replaceEquipment(RequesterInfo requesterInfo, UUID vehicleKey,
+        String maintenanceType, LocalDate changeDate) {
+
+        Vehicle vehicle = vehicleService.getVehicle(vehicleKey);
+        authService.checkAuthority(requesterInfo, vehicle.getOwner().getKey());
+        vehicleService.replaceEquipment(vehicle, maintenanceType, changeDate);
+    }
+
+    public void updateMileage(RequesterInfo requesterInfo, UUID vehicleKey, int mileage) {
+        Vehicle vehicle = vehicleService.getVehicle(vehicleKey);
+        authService.checkAuthority(requesterInfo, vehicle.getOwner().getKey());
+        vehicleService.updateMileage(vehicle, mileage);
     }
 }

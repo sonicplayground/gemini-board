@@ -7,6 +7,7 @@ import static com.sonicplayground.geminiboard.domain.common.Constant.VEHICLE_TIR
 
 import com.sonicplayground.geminiboard.domain.common.BaseEntity;
 import com.sonicplayground.geminiboard.domain.user.User;
+import com.sonicplayground.geminiboard.domain.vehicle.VehicleCommand.UpdateVehicleRequest;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -29,6 +30,7 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.type.SqlTypes;
+import org.springframework.util.StringUtils;
 
 /**
  * 차량 엔티티
@@ -124,5 +126,23 @@ public class Vehicle extends BaseEntity {
             date = LocalDate.now();
         }
         this.status.put(VEHICLE_BRAKE_PAD_REPLACEMENT_DATE, String.valueOf(date));
+    }
+
+    public void updateBasicInfos(UpdateVehicleRequest command) {
+        if (StringUtils.hasText(command.getName())){
+            this.name = command.getName();
+        }
+        if (StringUtils.hasText(command.getVehiclePicture())) {
+            this.vehiclePicture = command.getVehiclePicture();
+        }
+        if (StringUtils.hasText(command.getModelName())) {
+            this.modelName = command.getModelName();
+        }
+        if (StringUtils.hasText(command.getRegistrationPicture())) {
+            this.registrationPicture = command.getRegistrationPicture();
+        }
+        if (StringUtils.hasText(command.getMemo())) {
+            this.memo = command.getMemo();
+        }
     }
 }

@@ -7,5 +7,7 @@ public interface Constant {
     String VEHICLE_ENGINE_OIL_CHANGE_DATE = "engineOilChangeDate";
     String VEHICLE_BRAKE_PAD_REPLACEMENT_DATE = "brakePadReplacementDate";
 
-
+    String TIRE = "tire";
+    String ENGINE_OIL = "engineOil";
+    String BRAKE_PAD = "brakePad";
 }
