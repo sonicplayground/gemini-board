@@ -64,23 +64,23 @@ public class VehicleService {
         vehicle.updateBasicInfos(command);
         return vehicle;
     }
-
-    @Transactional
-    public void replaceEquipment(Vehicle vehicle, String maintenanceType, LocalDate changeDate) {
-        if (changeDate == null) {
-            changeDate = LocalDate.now();
-        }
-
-        if (Constant.TIRE.equals(maintenanceType)) {
-            vehicle.replaceTireOn(changeDate);
-        } else if (Constant.ENGINE_OIL.equals(maintenanceType)) {
-            vehicle.changeEngineOilOn(changeDate);
-        } else if (Constant.BRAKE_PAD.equals(maintenanceType)) {
-            vehicle.replaceBreakPadOn(changeDate);
-        } else {
-            throw new IllegalArgumentException("유효 하지 않은 유지 보수 유형 입니다.");
-        }
-    }
+//
+//    @Transactional
+//    public void replaceEquipment(Vehicle vehicle, String maintenanceType, LocalDate changeDate) {
+//        if (changeDate == null) {
+//            changeDate = LocalDate.now();
+//        }
+//
+//        if (Constant.TIRE.equals(maintenanceType)) {
+////            vehicle.replaceTireOn(changeDate);
+//        } else if (Constant.ENGINE_OIL.equals(maintenanceType)) {
+//            vehicle.changeEngineOilOn(changeDate);
+//        } else if (Constant.BRAKE_PAD.equals(maintenanceType)) {
+//            vehicle.replaceBreakPadOn(changeDate);
+//        } else {
+//            throw new IllegalArgumentException("유효 하지 않은 유지 보수 유형 입니다.");
+//        }
+//    }
 
     public void updateMileage(Vehicle vehicle, int mileage) {
         vehicle.updateMileage(mileage);

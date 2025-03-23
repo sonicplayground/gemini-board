@@ -136,7 +136,7 @@ public class Vehicle extends BaseEntity {
 
     public void replaceTireBackLeftOn(LocalDate date) {
         date = DateTImeUtil.validateAndGetDate(date);
-        this.status.put(VEHICLE_TIRE_BACK_LEFT_REPLCEMENT_DATE, String.valueOf(date));
+        this.status.put(VEHICLE_TIRE_BACK_LEFT_REPLACEMENT_DATE, String.valueOf(date));
     }
 
     public void replaceTireBackRightOn(LocalDate date) {
