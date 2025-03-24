@@ -66,7 +66,7 @@ public class VehicleApplicationService {
 
     @Transactional
     public void replaceEquipment(RequesterInfo requesterInfo, UUID vehicleKey, String maintenanceType, LocalDate changeDate) {
-        Vehicle vehicle = vehicleService.getVehicle(vehicleKey);
+        Vehicle vehicle = getVehicleWithAuthorityCheck(requesterInfo, vehicleKey);
 
         switch (maintenanceType) {
             case "engineOil":
@@ -76,16 +76,16 @@ public class VehicleApplicationService {
                 vehicle.replaceBreakPadOn(changeDate);
                 break;
             default:
-                throw new IllegalArgumentException("Invalid maintenance type");
+                throw new IllegalArgumentException("Invalid maintenance type: " + maintenanceType);
         }
     }
 
     @Transactional
     public void replaceEquipment(RequesterInfo requesterInfo, UUID vehicleKey, String maintenanceType, LocalDate changeDate, TirePosition tirePosition) {
-        Vehicle vehicle = vehicleService.getVehicle(vehicleKey);
+        Vehicle vehicle = getVehicleWithAuthorityCheck(requesterInfo, vehicleKey);
 
-        if (!maintenanceType.equals("tire")) {
-            throw new IllegalArgumentException("Invalid maintenance type");
+        if (!"tire".equals(maintenanceType)) {
+            throw new IllegalArgumentException("Invalid maintenance type for tire position: " + maintenanceType);
         }
 
         switch (tirePosition) {
@@ -102,19 +102,23 @@ public class VehicleApplicationService {
                 vehicle.replaceTireBackRightOn(changeDate);
                 break;
             default:
-                throw new IllegalArgumentException("Invalid tire position");
+                throw new IllegalArgumentException("Invalid tire position: " + tirePosition);
         }
     }
 
     public void updateMileage(RequesterInfo requesterInfo, UUID vehicleKey, int mileage) {
-        Vehicle vehicle = vehicleService.getVehicle(vehicleKey);
-        authService.checkAuthority(requesterInfo, vehicle.getOwner().getKey());
+        Vehicle vehicle = getVehicleWithAuthorityCheck(requesterInfo, vehicleKey);
         vehicleService.updateMileage(vehicle, mileage);
     }
 
     public void deleteVehicle(RequesterInfo requesterInfo, UUID vehicleKey) {
+        Vehicle vehicle = getVehicleWithAuthorityCheck(requesterInfo, vehicleKey);
+        vehicleService.deleteVehicle(vehicle);
+    }
+
+    private Vehicle getVehicleWithAuthorityCheck(RequesterInfo requesterInfo, UUID vehicleKey) {
         Vehicle vehicle = vehicleService.getVehicle(vehicleKey);
         authService.checkAuthority(requesterInfo, vehicle.getOwner().getKey());
-        vehicleService.deleteVehicle(vehicle);
+        return vehicle;
     }
 }
