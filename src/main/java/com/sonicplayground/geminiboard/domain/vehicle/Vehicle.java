@@ -4,7 +4,10 @@ import static com.sonicplayground.geminiboard.domain.common.Constant.DEFAULT_ANN
 import static com.sonicplayground.geminiboard.domain.common.Constant.VEHICLE_BRAKE_PAD_REPLACEMENT_DATE;
 import static com.sonicplayground.geminiboard.domain.common.Constant.VEHICLE_ENGINE_OIL_CHANGE_DATE;
 import static com.sonicplayground.geminiboard.domain.common.Constant.VEHICLE_MILEAGE;
-import static com.sonicplayground.geminiboard.domain.common.Constant.VEHICLE_TIRE_REPLACEMENT_DATE;
+import static com.sonicplayground.geminiboard.domain.common.Constant.VEHICLE_TIRE_BACK_LEFT_REPLACEMENT_DATE;
+import static com.sonicplayground.geminiboard.domain.common.Constant.VEHICLE_TIRE_BACK_RIGHT_REPLACEMENT_DATE;
+import static com.sonicplayground.geminiboard.domain.common.Constant.VEHICLE_TIRE_FORE_LEFT_REPLACEMENT_DATE;
+import static com.sonicplayground.geminiboard.domain.common.Constant.VEHICLE_TIRE_FORE_RIGHT_REPLACEMENT_DATE;
 
 import com.sonicplayground.geminiboard.common.util.DateTImeUtil;
 import com.sonicplayground.geminiboard.domain.common.BaseEntity;
@@ -22,6 +25,7 @@ import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import java.time.LocalDate;
 import java.time.Year;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
@@ -97,15 +101,16 @@ public class Vehicle extends BaseEntity {
 
         if (this.status == null) {
             String cand = String.format("%d-01-01", this.purchaseYear.getValue());
-            this.status = Map.of(
-                VEHICLE_MILEAGE,
-                String.valueOf(
-                    (LocalDate.now().getYear() - this.purchaseYear.getValue())
-                        * DEFAULT_ANNUAL_MILEAGE),
-                VEHICLE_TIRE_REPLACEMENT_DATE, cand,
-                VEHICLE_ENGINE_OIL_CHANGE_DATE, cand,
-                VEHICLE_BRAKE_PAD_REPLACEMENT_DATE, cand
-            );
+            this.status = new HashMap<>();
+            this.status.put(VEHICLE_MILEAGE, String.valueOf(
+                (LocalDate.now().getYear() - this.purchaseYear.getValue())
+                    * DEFAULT_ANNUAL_MILEAGE));
+            this.status.put(VEHICLE_TIRE_FORE_LEFT_REPLACEMENT_DATE, cand);
+            this.status.put(VEHICLE_TIRE_FORE_RIGHT_REPLACEMENT_DATE, cand);
+            this.status.put(VEHICLE_TIRE_BACK_LEFT_REPLACEMENT_DATE, cand);
+            this.status.put(VEHICLE_TIRE_BACK_RIGHT_REPLACEMENT_DATE, cand);
+            this.status.put(VEHICLE_ENGINE_OIL_CHANGE_DATE, cand);
+            this.status.put(VEHICLE_BRAKE_PAD_REPLACEMENT_DATE, cand);
         }
 
         if (LocalDate.now().isBefore(this.purchaseYear.atDay(1))) {
@@ -117,9 +122,25 @@ public class Vehicle extends BaseEntity {
         this.status.put(VEHICLE_MILEAGE, String.valueOf(mileage));
     }
 
-    public void replaceTireOn(LocalDate date) {
+    // New methods for individual tire replacement
+    public void replaceTireForeLeftOn(LocalDate date) {
         date = DateTImeUtil.validateAndGetDate(date);
-        this.status.put(VEHICLE_TIRE_REPLACEMENT_DATE, String.valueOf(date));
+        this.status.put(VEHICLE_TIRE_FORE_LEFT_REPLACEMENT_DATE, String.valueOf(date));
+    }
+
+    public void replaceTireForeRightOn(LocalDate date) {
+        date = DateTImeUtil.validateAndGetDate(date);
+        this.status.put(VEHICLE_TIRE_FORE_RIGHT_REPLACEMENT_DATE, String.valueOf(date));
+    }
+
+    public void replaceTireBackLeftOn(LocalDate date) {
+        date = DateTImeUtil.validateAndGetDate(date);
+        this.status.put(VEHICLE_TIRE_BACK_LEFT_REPLACEMENT_DATE, String.valueOf(date));
+    }
+
+    public void replaceTireBackRightOn(LocalDate date) {
+        date = DateTImeUtil.validateAndGetDate(date);
+        this.status.put(VEHICLE_TIRE_BACK_RIGHT_REPLACEMENT_DATE, String.valueOf(date));
     }
 
     public void changeEngineOilOn(LocalDate date) {

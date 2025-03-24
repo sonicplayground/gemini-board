@@ -9,6 +9,7 @@ import com.sonicplayground.geminiboard.domain.vehicle.VehicleCommand.UpdateVehic
 import com.sonicplayground.geminiboard.domain.vehicle.VehicleService;
 import com.sonicplayground.geminiboard.interfaces.user.LoginDto;
 import com.sonicplayground.geminiboard.interfaces.user.LoginDto.RequesterInfo;
+import com.sonicplayground.geminiboard.interfaces.vehicle.VehicleDto.TirePosition;
 import com.sonicplayground.geminiboard.interfaces.vehicle.VehicleDto.VehicleResponse;
 import com.sonicplayground.geminiboard.interfaces.vehicle.VehicleDto.VehicleSearchCondition;
 import java.time.LocalDate;
@@ -18,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -62,23 +64,64 @@ public class VehicleApplicationService {
         return new VehicleResponse(updated);
     }
 
+    @Transactional
     public void replaceEquipment(RequesterInfo requesterInfo, UUID vehicleKey,
         String maintenanceType, LocalDate changeDate) {
+        Vehicle vehicle = getVehicleWithAuthorityCheck(requesterInfo, vehicleKey);
 
-        Vehicle vehicle = vehicleService.getVehicle(vehicleKey);
-        authService.checkAuthority(requesterInfo, vehicle.getOwner().getKey());
-        vehicleService.replaceEquipment(vehicle, maintenanceType, changeDate);
+        switch (maintenanceType) {
+            case "engineOil":
+                vehicle.changeEngineOilOn(changeDate);
+                break;
+            case "brakePad":
+                vehicle.replaceBreakPadOn(changeDate);
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid maintenance type: " + maintenanceType);
+        }
+    }
+
+    @Transactional
+    public void replaceEquipment(RequesterInfo requesterInfo, UUID vehicleKey,
+        String maintenanceType, LocalDate changeDate, TirePosition tirePosition) {
+        Vehicle vehicle = getVehicleWithAuthorityCheck(requesterInfo, vehicleKey);
+
+        if (!"tire".equals(maintenanceType)) {
+            throw new IllegalArgumentException(
+                "Invalid maintenance type for tire position: " + maintenanceType);
+        }
+
+        switch (tirePosition) {
+            case FORE_LEFT:
+                vehicle.replaceTireForeLeftOn(changeDate);
+                break;
+            case FORE_RIGHT:
+                vehicle.replaceTireForeRightOn(changeDate);
+                break;
+            case BACK_LEFT:
+                vehicle.replaceTireBackLeftOn(changeDate);
+                break;
+            case BACK_RIGHT:
+                vehicle.replaceTireBackRightOn(changeDate);
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid tire position: " + tirePosition);
+        }
     }
 
     public void updateMileage(RequesterInfo requesterInfo, UUID vehicleKey, int mileage) {
-        Vehicle vehicle = vehicleService.getVehicle(vehicleKey);
-        authService.checkAuthority(requesterInfo, vehicle.getOwner().getKey());
+        Vehicle vehicle = getVehicleWithAuthorityCheck(requesterInfo, vehicleKey);
         vehicleService.updateMileage(vehicle, mileage);
     }
 
     public void deleteVehicle(RequesterInfo requesterInfo, UUID vehicleKey) {
+        Vehicle vehicle = getVehicleWithAuthorityCheck(requesterInfo, vehicleKey);
+        vehicleService.deleteVehicle(vehicle);
+    }
+
+    private Vehicle getVehicleWithAuthorityCheck(RequesterInfo requesterInfo, UUID vehicleKey) {
         Vehicle vehicle = vehicleService.getVehicle(vehicleKey);
         authService.checkAuthority(requesterInfo, vehicle.getOwner().getKey());
-        vehicleService.deleteVehicle(vehicle);
+        return vehicle;
     }
 }

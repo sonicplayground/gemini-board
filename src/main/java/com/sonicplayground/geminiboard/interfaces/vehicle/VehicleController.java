@@ -111,14 +111,20 @@ public class VehicleController {
 
     @PatchMapping("/{vehicleKey}/maintenance")
     @PreAuthorize("hasAnyAuthority('SERVICE_ADMIN', 'SERVICE_USER')")
-    public ResponseEntity<ResultMessageResponse> replaceTire(
+    public ResponseEntity<ResultMessageResponse> updateMaintenance(
         @AuthenticationPrincipal User requester,
         @Valid @RequestBody VehicleDto.MaintenanceRequest request,
         @PathVariable UUID vehicleKey) {
         LoginDto.RequesterInfo requesterInfo = RequesterInfo.from(requester);
 
-        vehicleApplicationService.replaceEquipment(requesterInfo,
-            vehicleKey, request.getMaintenanceType(), request.getChangeDate());
+        if (request.getMaintenanceType().equals("tire") && request.getTirePosition() != null) {
+            vehicleApplicationService.replaceEquipment(requesterInfo,
+                vehicleKey, request.getMaintenanceType(), request.getChangeDate(),
+                request.getTirePosition());
+        } else {
+            vehicleApplicationService.replaceEquipment(requesterInfo,
+                vehicleKey, request.getMaintenanceType(), request.getChangeDate());
+        }
 
         ResultMessageResponse result = new ResultMessageResponse("success");
         return ResponseEntity.ok(result);

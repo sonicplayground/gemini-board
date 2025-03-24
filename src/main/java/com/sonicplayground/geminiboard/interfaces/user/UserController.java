@@ -32,6 +32,18 @@ public class UserController {
 
     private final UserApplicationService userApplicationService;
 
+    /**
+     * Retrieves a paginated list of users based on the provided search criteria.
+     *
+     * @param page     The page number (default: 0).
+     * @param size     The page size (default: 10).
+     * @param nickname The nickname to search for (optional).
+     * @param gender   The gender to filter by (optional).
+     * @param minAge   The minimum age to filter by (optional).
+     * @param maxAge   The maximum age to filter by (optional).
+     * @param userType The user type to filter by (optional).
+     * @return A ResponseEntity containing a PagedContent of UserResponse objects.
+     */
     @GetMapping
     @PreAuthorize("hasAuthority('SERVICE_ADMIN')")
     public ResponseEntity<PagedContent<UserDto.UserResponse>> getUsers(
@@ -57,6 +69,13 @@ public class UserController {
         return ResponseEntity.ok(result);
     }
 
+    /**
+     * Retrieves a specific user by their user key.
+     *
+     * @param requester The authenticated user making the request.
+     * @param userKey   The unique identifier of the user to retrieve.
+     * @return A ResponseEntity containing the UserResponse object.
+     */
     @GetMapping(value = "/{userKey}")
     public ResponseEntity<UserDto.UserResponse> getUser(@AuthenticationPrincipal User requester,
         @PathVariable String userKey) {
@@ -65,6 +84,14 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
+    /**
+     * Updates a specific user's information.
+     *
+     * @param requester The authenticated user making the request.
+     * @param request   The UserUpdateRequest object containing the updated user information.
+     * @param userKey   The unique identifier of the user to update.
+     * @return A ResponseEntity containing the updated UserResponse object.
+     */
     @PutMapping(value = "/{userKey}")
     public ResponseEntity<UserDto.UserResponse> updateUser(
         @AuthenticationPrincipal User requester,
@@ -76,7 +103,13 @@ public class UserController {
         return ResponseEntity.ok(updatedUser);
     }
 
-
+    /**
+     * Deletes a specific user.
+     *
+     * @param requester The authenticated user making the request.
+     * @param userKey   The unique identifier of the user to delete.
+     * @return A ResponseEntity containing a DeleteResponse indicating the success of the operation.
+     */
     @DeleteMapping(value = "/{userKey}")
     public ResponseEntity<UserDto.DeleteResponse> deleteUser(
         @AuthenticationPrincipal User requester, @PathVariable String userKey) {
