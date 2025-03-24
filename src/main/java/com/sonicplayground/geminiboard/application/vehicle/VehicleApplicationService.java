@@ -65,7 +65,8 @@ public class VehicleApplicationService {
     }
 
     @Transactional
-    public void replaceEquipment(RequesterInfo requesterInfo, UUID vehicleKey, String maintenanceType, LocalDate changeDate) {
+    public void replaceEquipment(RequesterInfo requesterInfo, UUID vehicleKey,
+        String maintenanceType, LocalDate changeDate) {
         Vehicle vehicle = getVehicleWithAuthorityCheck(requesterInfo, vehicleKey);
 
         switch (maintenanceType) {
@@ -81,11 +82,13 @@ public class VehicleApplicationService {
     }
 
     @Transactional
-    public void replaceEquipment(RequesterInfo requesterInfo, UUID vehicleKey, String maintenanceType, LocalDate changeDate, TirePosition tirePosition) {
+    public void replaceEquipment(RequesterInfo requesterInfo, UUID vehicleKey,
+        String maintenanceType, LocalDate changeDate, TirePosition tirePosition) {
         Vehicle vehicle = getVehicleWithAuthorityCheck(requesterInfo, vehicleKey);
 
         if (!"tire".equals(maintenanceType)) {
-            throw new IllegalArgumentException("Invalid maintenance type for tire position: " + maintenanceType);
+            throw new IllegalArgumentException(
+                "Invalid maintenance type for tire position: " + maintenanceType);
         }
 
         switch (tirePosition) {

@@ -1,13 +1,11 @@
 package com.sonicplayground.geminiboard.domain.vehicle;
 
-import com.sonicplayground.geminiboard.domain.common.Constant;
 import com.sonicplayground.geminiboard.domain.user.User;
 import com.sonicplayground.geminiboard.domain.user.UserType;
 import com.sonicplayground.geminiboard.domain.vehicle.VehicleCommand.CreateVehicleRequest;
 import com.sonicplayground.geminiboard.domain.vehicle.VehicleCommand.UpdateVehicleRequest;
 import com.sonicplayground.geminiboard.interfaces.user.LoginDto.RequesterInfo;
 import com.sonicplayground.geminiboard.interfaces.vehicle.VehicleDto.VehicleSearchCondition;
-import java.time.LocalDate;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -54,6 +52,9 @@ public class VehicleService {
         if (UserType.SERVICE_USER.equals(requesterInfo.getUserType())) {
             targetUserKey = requesterInfo.getUserKey();
         } else {
+            if (condition.getOwnerUserKey() == null) {
+                return null;
+            }
             targetUserKey = UUID.fromString(condition.getOwnerUserKey());
         }
         return targetUserKey;

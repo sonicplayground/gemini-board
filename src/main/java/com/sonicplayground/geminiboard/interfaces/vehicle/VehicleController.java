@@ -119,7 +119,8 @@ public class VehicleController {
 
         if (request.getMaintenanceType().equals("tire") && request.getTirePosition() != null) {
             vehicleApplicationService.replaceEquipment(requesterInfo,
-                vehicleKey, request.getMaintenanceType(), request.getChangeDate(), request.getTirePosition());
+                vehicleKey, request.getMaintenanceType(), request.getChangeDate(),
+                request.getTirePosition());
         } else {
             vehicleApplicationService.replaceEquipment(requesterInfo,
                 vehicleKey, request.getMaintenanceType(), request.getChangeDate());

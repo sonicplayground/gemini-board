@@ -18,6 +18,11 @@ import lombok.ToString;
 
 public class VehicleDto {
 
+    // New enum for tire positions
+    public enum TirePosition {
+        FORE_LEFT, FORE_RIGHT, BACK_LEFT, BACK_RIGHT
+    }
+
     @AllArgsConstructor
     public static class CreateVehicleResponse {
 
@@ -38,11 +43,6 @@ public class VehicleDto {
         private String maintenanceType;
         private LocalDate changeDate;
         private TirePosition tirePosition; // New field for tire position
-    }
-
-    // New enum for tire positions
-    public enum TirePosition {
-        FORE_LEFT, FORE_RIGHT, BACK_LEFT, BACK_RIGHT
     }
 
     @AllArgsConstructor

@@ -8,7 +8,6 @@ import static com.sonicplayground.geminiboard.domain.common.Constant.VEHICLE_TIR
 import static com.sonicplayground.geminiboard.domain.common.Constant.VEHICLE_TIRE_BACK_RIGHT_REPLACEMENT_DATE;
 import static com.sonicplayground.geminiboard.domain.common.Constant.VEHICLE_TIRE_FORE_LEFT_REPLACEMENT_DATE;
 import static com.sonicplayground.geminiboard.domain.common.Constant.VEHICLE_TIRE_FORE_RIGHT_REPLACEMENT_DATE;
-//import static com.sonicplayground.geminiboard.domain.common.Constant.VEHICLE_TIRE_REPLACEMENT_DATE;
 
 import com.sonicplayground.geminiboard.common.util.DateTImeUtil;
 import com.sonicplayground.geminiboard.domain.common.BaseEntity;
