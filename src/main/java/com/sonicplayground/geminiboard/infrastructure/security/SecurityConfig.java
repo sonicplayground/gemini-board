@@ -23,7 +23,8 @@ public class SecurityConfig {
     private final JwtAuthFilter jwtAuthenticationFilter;
     private final JwtAuthEntryPoint jwtAuthEntryPoint;
 
-    private final String[] allowed = {"/", "/api/v1/login/**", "/api/v1/users/**"};
+    private final String[] allowed = {"/", "/api/v1/login/**", "/api/v1/users/**",
+        "/api/v1/experiments/reqbody/**"};
 
     @Bean
     public PasswordEncoder passwordEncoder() {
