@@ -1,12 +1,14 @@
 package com.sonicplayground.geminiboard.interfaces.experiment.reqbody;
 
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
+import lombok.extern.jackson.Jacksonized;
 
 @Getter
+@Jacksonized
+@Builder
 @ToString
-@AllArgsConstructor
 public class ImmutableClassCase {
     private final int pIntVar;
     private final Integer wIntVar;
