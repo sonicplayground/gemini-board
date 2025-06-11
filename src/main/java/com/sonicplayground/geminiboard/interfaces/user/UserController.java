@@ -47,13 +47,13 @@ public class UserController {
     @GetMapping
     @PreAuthorize("hasAuthority('SERVICE_ADMIN')")
     public ResponseEntity<PagedContent<UserDto.UserResponse>> getUsers(
-        @RequestParam(defaultValue = "0") int page,
-        @RequestParam(defaultValue = "10") int size,
-        @RequestParam(required = false) String nickname,
-        @RequestParam(required = false) String gender,
-        @RequestParam(required = false) Integer minAge,
-        @RequestParam(required = false) Integer maxAge,
-        @RequestParam(required = false) String userType
+        @RequestParam(name = "page", defaultValue = "0") int page,
+        @RequestParam(name = "size", defaultValue = "10") int size,
+        @RequestParam(name = "nickname", required = false) String nickname,
+        @RequestParam(name = "gender", required = false) String gender,
+        @RequestParam(name = "minAge", required = false) Integer minAge,
+        @RequestParam(name = "maxAge", required = false) Integer maxAge,
+        @RequestParam(name = "userType", required = false) String userType
     ) {
         Pageable pageable = PageRequest.of(page, size);
         UserDto.UserSearchCondition condition = UserDto.UserSearchCondition.builder()
@@ -78,7 +78,7 @@ public class UserController {
      */
     @GetMapping(value = "/{userKey}")
     public ResponseEntity<UserDto.UserResponse> getUser(@AuthenticationPrincipal User requester,
-        @PathVariable String userKey) {
+        @PathVariable("userKey") String userKey) {
         LoginDto.RequesterInfo requesterInfo = LoginDto.RequesterInfo.from(requester);
         UserResponse user = userApplicationService.getUser(requesterInfo, UUID.fromString(userKey));
         return ResponseEntity.ok(user);
@@ -96,7 +96,7 @@ public class UserController {
     public ResponseEntity<UserDto.UserResponse> updateUser(
         @AuthenticationPrincipal User requester,
         @RequestBody UserDto.UserUpdateRequest request,
-        @PathVariable String userKey) {
+        @PathVariable("userKey") String userKey) {
         LoginDto.RequesterInfo requesterInfo = LoginDto.RequesterInfo.from(requester);
         UserDto.UserResponse updatedUser = userApplicationService.updateUser(requesterInfo,
             UUID.fromString(userKey), request.toCommand());
@@ -112,7 +112,7 @@ public class UserController {
      */
     @DeleteMapping(value = "/{userKey}")
     public ResponseEntity<UserDto.DeleteResponse> deleteUser(
-        @AuthenticationPrincipal User requester, @PathVariable String userKey) {
+        @AuthenticationPrincipal User requester, @PathVariable("userKey") String userKey) {
         LoginDto.RequesterInfo requesterInfo = LoginDto.RequesterInfo.from(requester);
         userApplicationService.deleteUser(requesterInfo, UUID.fromString(userKey));
         UserDto.DeleteResponse response = new UserDto.DeleteResponse("User deleted successfully");

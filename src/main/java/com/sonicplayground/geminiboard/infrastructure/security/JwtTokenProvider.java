@@ -19,19 +19,19 @@ public class JwtTokenProvider {
     public String createToken(String userInfo) {
         log.debug("createToken userInfo: {}", userInfo);
         return Jwts.builder()
-            .signWith(new SecretKeySpec(jwtProperties.getSecretKey().getBytes(),
+            .signWith(new SecretKeySpec(jwtProperties.secretKey().getBytes(),
                 SignatureAlgorithm.HS512.getJcaName()))
             .setSubject(userInfo)
-            .setIssuer(jwtProperties.getIssuer())
+            .setIssuer(jwtProperties.issuer())
             .setIssuedAt(Timestamp.valueOf(LocalDateTime.now()))
             .setExpiration(Timestamp.valueOf(LocalDateTime.now().plusHours(
-                jwtProperties.getExpirationHours())))
+                jwtProperties.expirationHours())))
             .compact();
     }
 
     public String getUserInfo(String token) {
         return Jwts.parserBuilder()
-            .setSigningKey(jwtProperties.getSecretKey().getBytes())
+            .setSigningKey(jwtProperties.secretKey().getBytes())
             .build()
             .parseClaimsJws(token)
             .getBody()

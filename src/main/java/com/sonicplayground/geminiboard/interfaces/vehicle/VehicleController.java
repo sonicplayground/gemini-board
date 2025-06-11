@@ -52,7 +52,7 @@ public class VehicleController {
     @GetMapping("/{vehicleKey}")
     public ResponseEntity<VehicleDto.VehicleResponse> getVehicle(
         @AuthenticationPrincipal User requester,
-        @PathVariable UUID vehicleKey) {
+        @PathVariable("vehicleKey") UUID vehicleKey) {
         LoginDto.RequesterInfo requesterInfo = RequesterInfo.from(requester);
         VehicleDto.VehicleResponse vehicle = vehicleApplicationService.getVehicle(requesterInfo,
             vehicleKey);
@@ -64,15 +64,15 @@ public class VehicleController {
     @PreAuthorize("hasAnyAuthority('SERVICE_ADMIN', 'SERVICE_USER')")
     public ResponseEntity<PagedContent<VehicleResponse>> getVehicle(
         @AuthenticationPrincipal User requester,
-        @RequestParam(defaultValue = "0") int page,
-        @RequestParam(defaultValue = "10") int size,
-        @RequestParam(required = false) String vin,
-        @RequestParam(required = false) String ownerUserKey,
-        @RequestParam(required = false) String manufacturer,
-        @RequestParam(required = false) String modelName,
-        @RequestParam(required = false) String vehicleKey,
-        @RequestParam(required = false) Integer minMileage,
-        @RequestParam(required = false) Integer maxMileage) {
+        @RequestParam(name = "page", defaultValue = "0") int page,
+        @RequestParam(name = "size", defaultValue = "10") int size,
+        @RequestParam(name = "vin", required = false) String vin,
+        @RequestParam(name = "ownerUserKey", required = false) String ownerUserKey,
+        @RequestParam(name = "manufacturer", required = false) String manufacturer,
+        @RequestParam(name = "modelName", required = false) String modelName,
+        @RequestParam(name = "vehicleKey", required = false) String vehicleKey,
+        @RequestParam(name = "minMileage", required = false) Integer minMileage,
+        @RequestParam(name = "maxMileage", required = false) Integer maxMileage) {
 
         Pageable pageable = PageRequest.of(page, size);
         LoginDto.RequesterInfo requesterInfo = RequesterInfo.from(requester);
@@ -99,7 +99,7 @@ public class VehicleController {
     @PreAuthorize("hasAnyAuthority('SERVICE_ADMIN', 'SERVICE_USER')")
     public ResponseEntity<VehicleDto.VehicleResponse> updateVehicle(
         @AuthenticationPrincipal User requester,
-        @PathVariable UUID vehicleKey,
+        @PathVariable("vehicleKey") UUID vehicleKey,
         @RequestBody @Valid VehicleDto.UpdateVehicleRequest request) {
         LoginDto.RequesterInfo requesterInfo = RequesterInfo.from(requester);
 
@@ -114,7 +114,7 @@ public class VehicleController {
     public ResponseEntity<ResultMessageResponse> updateMaintenance(
         @AuthenticationPrincipal User requester,
         @Valid @RequestBody VehicleDto.MaintenanceRequest request,
-        @PathVariable UUID vehicleKey) {
+        @PathVariable("vehicleKey") UUID vehicleKey) {
         LoginDto.RequesterInfo requesterInfo = RequesterInfo.from(requester);
 
         if (request.getMaintenanceType().equals("tire") && request.getTirePosition() != null) {
@@ -135,7 +135,7 @@ public class VehicleController {
     public ResponseEntity<ResultMessageResponse> updateMileage(
         @AuthenticationPrincipal User requester,
         @Valid @RequestBody VehicleDto.UpdateMileageRequest request,
-        @PathVariable UUID vehicleKey) {
+        @PathVariable("vehicleKey") UUID vehicleKey) {
         LoginDto.RequesterInfo requesterInfo = RequesterInfo.from(requester);
 
         vehicleApplicationService.updateMileage(requesterInfo,
@@ -149,7 +149,7 @@ public class VehicleController {
     @DeleteMapping("/{vehicleKey}")
     public ResponseEntity<VehicleDto.ResultMessageResponse> deleteVehicle(
         @AuthenticationPrincipal User requester,
-        @PathVariable UUID vehicleKey) {
+        @PathVariable("vehicleKey") UUID vehicleKey) {
         LoginDto.RequesterInfo requesterInfo = RequesterInfo.from(requester);
         vehicleApplicationService.deleteVehicle(requesterInfo, vehicleKey);
         VehicleDto.ResultMessageResponse vehicle = new VehicleDto.ResultMessageResponse("success");
